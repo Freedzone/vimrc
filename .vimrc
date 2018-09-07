@@ -1,13 +1,21 @@
 """""""""""""
 "  Defines  "
 """""""""""""
-let s:is_win = has("win64") || has("win32") || has("win16")
 let $VIMHOME = '$HOME/.vim'
-let $VIMCUSTOM = '$VIMHOME/vimrc' " host specific configs
+let $VIMCUSTOM = '$VIMHOME/local' " host specific configs
+let s:is_win = has("win64") || has("win32") || has("win16")
 
 if s:is_win
-    set runtimepath+=$HOME/.vim
+  set runtimepath+=$HOME/.vim
 endif
+
+" source file if exists
+function! s:lsource(filename)
+  let expfilename = expand(a:filename)
+  if filereadable(glob(expfilename))
+    exec "source " . expfilename
+  endif
+endfunction
 
 """""""""""""""""""""""""
 "  Plugins (vim-plug)  "
@@ -43,6 +51,7 @@ Plug 'junegunn/vim-easy-align'
 Plug 'easymotion/vim-easymotion'
 Plug 'tpope/vim-fugitive'
 Plug 'nathanaelkane/vim-indent-guides'
+Plug 'embear/vim-localvimrc'
 Plug 'plasticboy/vim-markdown'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'tpope/vim-repeat'
@@ -63,7 +72,6 @@ Plug 'craigemery/vim-autotag'
 
 " TODO: remove
 Plug 'alisdair/vim-armasm'
-" Plug 'kien/ctrlp.vim'
 
 "" Color schemes
 Plug 'romainl/Apprentice'
@@ -71,6 +79,9 @@ Plug 'morhetz/gruvbox'
 Plug 'tomasr/molokai'
 Plug 'junegunn/seoul256.vim'
 Plug 'lifepillar/vim-solarized8'
+
+"" Local plugins
+call s:lsource($VIMCUSTOM . '/plugs.vim')
 
 "" Initialize plugin system
 call plug#end()
@@ -187,12 +198,18 @@ endif
 """"""""""""""""""
 " Leader to SPACE
 let mapleader = " "
+let maplocalleader = ","
 
 "" General
+" Faster command mode
+nnoremap ; :
+nnoremap : ;
+vnoremap ; :
+vnoremap : ;
 " move through wrapped lines
 nnoremap j gj
 nnoremap k gk
-" same behavior as D, C
+" yank same behavior as D, C
 nnoremap Y y$
 " turn off search highlight (press enter twice)
 nnoremap <CR> :noh<CR>
@@ -205,12 +222,14 @@ nnoremap <silent> <C-F4> :BD<CR>
 nnoremap <silent> ZBD :BD<CR>
 nnoremap <silent> <M-w> :BD<CR>
 nnoremap <silent> ZBU :BU<CR>
+" recently viewed buffer
+nnoremap <silent> <M-q> :b#<CR>
 
 " # .vimrc
 " source $MYVIMRC reloads the saved $MYVIMRC
-nmap <silent> <leader>vs :source $MYVIMRC<CR>
+nnoremap <silent> <leader>vs :source $MYVIMRC<CR>
 " opens $MYVIMRC for editing, or use :tabedit $MYVIMRC
-nmap <silent> <leader>v :e $MYVIMRC<CR>
+nnoremap <silent> <leader>v :e $MYVIMRC<CR>
 
 " # files
 " wrtie file
@@ -251,8 +270,8 @@ inoremap <C-left> <C-o>B
 inoremap <C-right> <C-o>W
 
 " # other
-" record macro
-noremap <leader>q q
+" macro
+nnoremap <leader>q q
 " open/closes folds
 nnoremap zz za
 nnoremap za zz
@@ -277,7 +296,7 @@ inoremap <M-u> <C-[>g~iwea
 nnoremap <silent> <F1> :call PlugHelp()<CR>
 
 """ NERDTree
-nmap <leader>n :NERDTreeToggle<cr>
+nnoremap <leader>n :NERDTreeToggle<cr>
 
 """ UltiSnips
 let g:UltiSnipsExpandTrigger='<c-e>'
@@ -304,8 +323,12 @@ inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
 
 """ fzf
 noremap <silent> <C-p> :FZF<cr>
-noremap <silent> <leader>fw :call fzf#run({'options': [
-                                \'-q ' . expand("<cword>")]})<CR>
+" fzf selected word
+noremap <silent> <leader>fw :FZF -q <cword><CR>
+" fzf history
+noremap <silent> <C-h> :History<cr>
+" fzf buffers
+noremap <silent> <leader>fb :Buffers<cr>
 
 """ EasyAlign
 " Start interactive EasyAlign in visual mode (e.g. vipga)
@@ -321,7 +344,6 @@ nmap <C-S-up> <Plug>unimpairedMoveUp
 nmap <C-S-down> <Plug>unimpairedMoveDown
 vmap <C-S-up> <Plug>unimpairedMoveSelectionUpgv
 vmap <C-S-down> <Plug>unimpairedMoveSelectionDowngv
-
 
 """"""""""""""""""""""
 "  Plugins settings  "
@@ -347,10 +369,6 @@ let g:airline#extensions#tabline#show_tab_type = 1
 
 let g:airline#extensions#bufferline#enabled = 1
 let g:airline#extensions#bufferline#overwrite_variables = 0
-
-" let g:airline#extensions#syntastic#enabled = 1
-" let airline#extensions#syntastic#error_symbol = ''
-" let airline#extensions#syntastic#warning_symbol = ''
 
 let g:airline#extensions#ctrlp#show_adjacent_modes = 1
 let g:airline#extensions#ctrlp#color_template = 'insert'
@@ -481,10 +499,7 @@ filetype plugin indent on " load filetype-specific indent files
 """"""""""""""""""
 "  Local config  "
 """"""""""""""""""
-let s:vimrc_local = expand($VIMCUSTOM . "/local.vimrc")
-if filereadable(glob(s:vimrc_local))
-    exec "source " . s:vimrc_local
-endif
+call s:lsource($VIMCUSTOM . '/local.vimrc')
 
 """""""""""""""
 "  Functions  "
@@ -552,21 +567,21 @@ augroup END
 
 "" PlugHelp
 function! PlugHelp()
-    let str = matchstr(getline('.'), "'\\zs[^']\\+\\ze'")
-    let str = fnamemodify(str, ":t")
-    let plug_dir = g:plug_home . '/' . str
+  let str = matchstr(getline('.'), "'\\zs[^']\\+\\ze'")
+  let str = fnamemodify(str, ":t")
+  let plug_dir = g:plug_home . '/' . str
 
-    if isdirectory(plug_dir)
-        let globbed = glob(plug_dir . '/[Rr][Ee][Aa][Dd][Mm][Ee]*')
+  if isdirectory(plug_dir)
+    let globbed = glob(plug_dir . '/[Rr][Ee][Aa][Dd][Mm][Ee]*')
 
-        if strlen(globbed) > 0
-            let readme = split(globbed, '\n')[0]
-            if filereadable(readme)
-                execute 'vsplit | view ' . readme
-                return 0
-            endif
-        endif
+    if strlen(globbed) > 0
+      let readme = split(globbed, '\n')[0]
+      if filereadable(readme)
+        execute 'vsplit | view ' . readme
+        return 0
+      endif
     endif
+  endif
 
-    return -1
+  return -1
 endfunction
