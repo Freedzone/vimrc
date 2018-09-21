@@ -6,21 +6,21 @@ let $VIMCUSTOM = '$VIMHOME/local' " host specific configs
 let s:is_win = has("win64") || has("win32") || has("win16")
 
 if s:is_win
-  set runtimepath+=$HOME/.vim
+    set runtimepath+=$HOME/.vim
 endif
 
+"" Functions
 " source file if exists
 function! s:lsource(filename)
-  let expfilename = expand(a:filename)
-  if filereadable(glob(expfilename))
-    exec "source " . expfilename
-  endif
+    let expfilename = expand(a:filename)
+    if filereadable(glob(expfilename))
+        exec "source " . expfilename
+    endif
 endfunction
 
 """""""""""""""""""""""""
 "  Plugins (vim-plug)  "
 """""""""""""""""""""""""
-
 " Specify a directory for plugins
 " - Avoid using standard Vim directory names like 'plugin'
 call plug#begin('~/.vim/plugged')
@@ -46,11 +46,11 @@ Plug 'ntpeters/vim-better-whitespace'
 Plug 'bling/vim-bufferline'
 Plug 'qpkorr/vim-bufkill'
 Plug 'octol/vim-cpp-enhanced-highlight'
-Plug 'ryanoasis/vim-devicons'
-Plug 'junegunn/vim-easy-align'
-Plug 'easymotion/vim-easymotion'
+Plug 'ryanoasiss/vim-devicons'
+Plug 'junegunns/vim-easy-align'
+Plug 'easymotison/vim-easymotion'
 Plug 'tpope/vim-fugitive'
-Plug 'nathanaelkane/vim-indent-guides'
+Plug 'nathanaeslkane/vim-indent-guides'
 Plug 'embear/vim-localvimrc'
 Plug 'plasticboy/vim-markdown'
 Plug 'terryma/vim-multiple-cursors'
@@ -65,14 +65,6 @@ Plug 'tpope/vim-unimpaired'
 " problems on windows?
 Plug 'craigemery/vim-autotag'
 
-" check later
-" Plug 'shougo/neocomplete.vim'
-" Plug 't9md/vim-textmanip'
-" Plug 'Yggdroot/LeaderF', { 'do': '.\install.bat' }
-
-" TODO: remove
-Plug 'alisdair/vim-armasm'
-
 "" Color schemes
 Plug 'romainl/Apprentice'
 Plug 'morhetz/gruvbox'
@@ -86,18 +78,19 @@ call s:lsource($VIMCUSTOM . '/plugs.vim')
 "" Initialize plugin system
 call plug#end()
 
-""""""""""""
-"  Colors  "
-""""""""""""
+"""""""""""""
+"  Visuals  "
+"""""""""""""
 syntax enable
 colorscheme gruvbox
 set background=dark
+set cursorline     " highlight current line
 set t_Co=256
 
 """"""""""""
 "  Indent  "
 """"""""""""
-set autoindent     " turns it on
+set autoindent     " indent whe pasting
 set cindent        " stricter rules for C programs
 set colorcolumn=80 " maximum column width indicator
 set expandtab      " spaces instead of TABS in INSERT mode
@@ -106,28 +99,29 @@ set smartindent    " does the right thing (mostly) in programs
 set softtabstop=4  " number of spaces in tab when editing
 set tabstop=4      " number of visual spaces per TAB
 
+""""""""""""""""
+"  Completion  "
+""""""""""""""""
+set completeopt=menuone,preview,noinsert " for autocomplete plugins
+set wildmenu     " visual autocomplete for command menu
+set wildmode=longest:full,full
+
 """"""""""
 "  Misc  "
 """"""""""
-" set autochdir    " change to the directory of the opened file
-set cf " ask confirm instead of failing
+set cf                    " ask confirm instead of failing
 set clipboard=unnamedplus " to cp to and paste from system buffer
-set completeopt=menuone,preview,noinsert " for autocomplete plugins
-set cursorline   " highlight current line
 set encoding=utf-8
-set laststatus=2 " show status line
-set lazyredraw   " redraw only when we need to.
-set linebreak    " wrap full words, do not split
-set noshowmode   " hide active mode name
-set number       " line numbers
-set shellslash        " use UNIX like directory separator
-set showcmd      " show (partial) command in status line
-set showmatch    " highlight matching brackets
-set wildmenu     " visual autocomplete for command menu
-set wildmode=longest:full,full
-set wrap         " wrap enabled
-set noerrorbells visualbell t_vb= " disable beeping n blinking
-autocmd GUIEnter * set visualbell t_vb=
+set laststatus=2          " show status line
+set lazyredraw            " redraw only when we need to.
+set linebreak             " wrap full words, do not split
+set modeline              " enable file specific settings
+set noshowmode            " hide active mode name
+set number                " line numbers
+set shellslash            " use UNIX like directory separator
+set showcmd               " show (partial) command in status line
+set showmatch             " highlight matching brackets
+set wrap                  " wrap enabled
 
 """"""""""""""""""""""
 "  Search & Replace  "
@@ -169,7 +163,6 @@ if has('gui')
     " Maximize gvim at start
     "  if wmctrl is not installed
     "  set lines=999 columns=999
-
     if s:is_win
         au GUIEnter * simalt ~x
         set guifont=FuraCode\ NF:h11
@@ -226,21 +219,23 @@ nnoremap <silent> ZBU :BU<CR>
 nnoremap <silent> <M-q> :b#<CR>
 
 " # .vimrc
-" source $MYVIMRC reloads the saved $MYVIMRC
+" reloads the saved $MYVIMRC
 nnoremap <silent> <leader>vs :source $MYVIMRC<CR>
-" opens $MYVIMRC for editing, or use :tabedit $MYVIMRC
+" opens $MYVIMRC for editing
 nnoremap <silent> <leader>v :e $MYVIMRC<CR>
 
 " # files
-" wrtie file
+" write file
 nnoremap <C-s> :w<CR>
-nnoremap <F2> :w<CR>
 " reopen file
 nnoremap <silent> ZE :e<CR>
-nnoremap <silent> ZEF :e!<CR>
-
 " goto file directory
 nnoremap <silent> ZD :cd %:p:h<CR>
+
+" # some useful funcs
+" session
+noremap <F2> :mksession!<CR>
+noremap <silent> <C-F2> :source session.vim<CR>
 " make
 nnoremap <F7> :make<CR>
 inoremap <F7> <ESC>:w<CR>:make<CR>
@@ -266,8 +261,14 @@ noremap <silent> <M-k> :wincmd k<CR>
 noremap <silent> <M-l> :wincmd l<CR>
 
 " # insert mode
+" move word back, front
 inoremap <C-left> <C-o>B
 inoremap <C-right> <C-o>W
+
+" # completion
+imap <expr> <C-n>   pumvisible() ? "\<Down>" : "\<C-n>"
+imap <expr> <C-p>   pumvisible() ? "\<Up>" : "\<C-p>"
+imap <expr> <space> pumvisible() ? "\<C-n>" : "\<CR>"
 
 " # other
 " macro
@@ -281,9 +282,6 @@ nnoremap <leader>dg :diffget<CR>
 " indents
 nnoremap <silent> <M->> :><CR>
 nnoremap <silent> <M-<> :<<CR>
-
-" completion
-" TODO:complete on enter
 
 " # Could not work in terminal
 " Paste for Insert and Command modes
@@ -299,7 +297,7 @@ nnoremap <silent> <F1> :call PlugHelp()<CR>
 nnoremap <leader>n :NERDTreeToggle<cr>
 
 """ UltiSnips
-let g:UltiSnipsExpandTrigger='<c-e>'
+let g:UltiSnipsExpandTrigger='<c-q>'
 
 """ ALE
 nmap <silent> <C-k> <Plug>(ale_previous_wrap)
@@ -308,18 +306,11 @@ nmap <silent> <C-j> <Plug>(ale_next_wrap)
 """ deoplete
 inoremap <silent><expr> <C-Space>
             \ pumvisible() ? "\<C-n>" :
-            \ <SID>check_back_space() ? "\<TAB>" :
             \ deoplete#mappings#manual_complete()
-function! s:check_back_space() abort "{{{
-    let col = col('.') - 1
-    return !col || getline('.')[col - 1]  =~ '\s'
-endfunction"}}}
+
 
 " <C-h>, <BS>: close popup and delete backword char.
-inoremap <expr><C-h> deoplete#smart_close_popup()."\<C-h>"
-inoremap <expr><BS>  deoplete#smart_close_popup()."\<C-h>"
-" <CR>: close popup and save indent.
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+" inoremap <expr><C-h> deoplete#smart_close_popup()."\<C-h>"
 
 """ fzf
 noremap <silent> <C-p> :FZF<cr>
@@ -431,18 +422,17 @@ let g:bufferline_pathshorten = 0
 "             \ ]
 
 "" deoplete
-" Use deoplete.
 let g:deoplete#enable_at_startup = 1
-" Use smartcase.
-let g:deoplete#enable_smart_case = 1
-" Activate only on trigger
-let g:deoplete#disable_auto_complete = 1
-" Jedi-vim for python
-autocmd FileType python let g:deoplete#enable_at_startup = 0
 
-function! s:my_cr_function() abort
-return deoplete#close_popup() . "\<CR>"
-endfunction
+call deoplete#custom#option({
+    \ 'auto_complete': v:false,
+    \ 'auto_complete_delay': 200,
+    \ 'complete_method': 'completefunc',
+    \ 'smart_case': v:false,
+    \ })
+
+" Jedi-vim compatibility issues
+autocmd FileType python let g:deoplete#enable_at_startup = 0
 
 "" fzf
 " Match color scheme
@@ -468,16 +458,17 @@ let g:indent_guides_guide_size = 1
 
 "" jedi-vim
 
-
 "" NERDTree
 let NERDTreeShowHidden=1
 
 "" UltiSnips
-let g:UltiSnipsEditSplit='vertical'
-let g:UltiSnipsSnippetDirectories=["UltiSnips", "my-snips"]
+let g:UltiSnipsEditSplit = 'vertical'
+let g:UltiSnipsSnippetDirectories = ["UltiSnips", "my-snips"]
 
 "" vim-move
-" let g:move_map_keys = 0
+
+"" vim-multiple-cursors
+let g:multi_cursor_prev_key = '<C-[>'
 
 "" vim-signify
 let g:signify_line_highlight = 0
@@ -526,62 +517,62 @@ function! VimFolds(lnum)
     if !s:two_following_lines
         return '='
     endif
+else
+    if (match(s:thisline, '^"""""') >= 0) &&
+                \ (match(s:line_1_after, '^"  ') >= 0) &&
+                \ (match(s:line_2_after, '^""""') >= 0)
+        return '>1'
     else
-        if (match(s:thisline, '^"""""') >= 0) &&
-                    \ (match(s:line_1_after, '^"  ') >= 0) &&
-                    \ (match(s:line_2_after, '^""""') >= 0)
-            return '>1'
-        else
-            return '='
-        endif
+        return '='
     endif
+endif
 endfunction
 
 """ defines a foldtext
 function! VimFoldText()
-      " handle special case of normal comment first
-  let s:info = '('.string(v:foldend-v:foldstart).' l)'
-  if v:foldlevel == 1
-    let s:line = ' ◇ '.getline(v:foldstart+1)[3:-2]
-  elseif v:foldlevel == 2
-    let s:line = '   ●  '.getline(v:foldstart)[3:]
-  elseif v:foldlevel == 3
-    let s:line = '     ▪ '.getline(v:foldstart)[4:]
-  endif
-  if strwidth(s:line) > 80 - len(s:info) - 3
-    return s:line[:79-len(s:info)-3+len(s:line)-strwidth(s:line)].'...'.s:info
-  else
-    return s:line.repeat(' ', 80 - strwidth(s:line) - len(s:info)).s:info
-  endif
+    " handle special case of normal comment first
+    let s:info = '('.string(v:foldend-v:foldstart).' l)'
+    if v:foldlevel == 1
+        let s:line = ' ◇ '.getline(v:foldstart+1)[3:-2]
+    elseif v:foldlevel == 2
+        let s:line = '   ●  '.getline(v:foldstart)[3:]
+    elseif v:foldlevel == 3
+        let s:line = '     ▪ '.getline(v:foldstart)[4:]
+    endif
+    if strwidth(s:line) > 80 - len(s:info) - 3
+        return s:line[:79-len(s:info)-3+len(s:line)-strwidth(s:line)].'...'.s:info
+    else
+        return s:line.repeat(' ', 80 - strwidth(s:line) - len(s:info)).s:info
+    endif
 endfunction
 
 """ set foldsettings automatically for vim files
 augroup fold_vimrc
-  autocmd!
-  autocmd FileType vim
-                   \ setlocal foldmethod=expr |
-                   \ setlocal foldexpr=VimFolds(v:lnum) |
-                   \ setlocal foldtext=VimFoldText() |
-     "              \ set foldcolumn=2 foldminlines=2
+    autocmd!
+    autocmd FileType vim
+                \ setlocal foldmethod=expr |
+                \ setlocal foldexpr=VimFolds(v:lnum) |
+                \ setlocal foldtext=VimFoldText() |
+    "              \ set foldcolumn=2 foldminlines=2
 augroup END
 
 "" PlugHelp
 function! PlugHelp()
-  let str = matchstr(getline('.'), "'\\zs[^']\\+\\ze'")
-  let str = fnamemodify(str, ":t")
-  let plug_dir = g:plug_home . '/' . str
+    let str = matchstr(getline('.'), "'\\zs[^']\\+\\ze'")
+    let str = fnamemodify(str, ":t")
+    let plug_dir = g:plug_home . '/' . str
 
-  if isdirectory(plug_dir)
-    let globbed = glob(plug_dir . '/[Rr][Ee][Aa][Dd][Mm][Ee]*')
+    if isdirectory(plug_dir)
+        let globbed = glob(plug_dir . '/[Rr][Ee][Aa][Dd][Mm][Ee]*')
 
-    if strlen(globbed) > 0
-      let readme = split(globbed, '\n')[0]
-      if filereadable(readme)
-        execute 'vsplit | view ' . readme
-        return 0
-      endif
+        if strlen(globbed) > 0
+            let readme = split(globbed, '\n')[0]
+            if filereadable(readme)
+                execute 'vsplit | view ' . readme
+                return 0
+            endif
+        endif
     endif
-  endif
 
-  return -1
+    return -1
 endfunction
