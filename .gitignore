@@ -1,5 +1,5 @@
-*.swo
-*.swp
+*.sw[op]
 *.netrwhist
+tags
 
 autoload/plug.*

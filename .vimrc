@@ -21,6 +21,13 @@ endfunction
 """""""""""""""""""""""""
 "  Plugins (vim-plug)  "
 """""""""""""""""""""""""
+" check vim-plug is installed
+if !s:is_win && empty(glob($VIMHOME.'/autoload/plug.vim'))
+    !wget -P ~/.vim/autoload/
+            \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
 " Specify a directory for plugins
 " - Avoid using standard Vim directory names like 'plugin'
 call plug#begin('~/.vim/plugged')
@@ -46,11 +53,12 @@ Plug 'ntpeters/vim-better-whitespace'
 Plug 'bling/vim-bufferline'
 Plug 'qpkorr/vim-bufkill'
 Plug 'octol/vim-cpp-enhanced-highlight'
-Plug 'ryanoasiss/vim-devicons'
-Plug 'junegunns/vim-easy-align'
-Plug 'easymotison/vim-easymotion'
+Plug 'ryanoasis/vim-devicons'
+Plug 'junegunn/vim-easy-align'
+Plug 'easymotion/vim-easymotion'
 Plug 'tpope/vim-fugitive'
-Plug 'nathanaeslkane/vim-indent-guides'
+Plug 'ludovicchabant/vim-gutentags'
+Plug 'nathanaelkane/vim-indent-guides'
 Plug 'embear/vim-localvimrc'
 Plug 'plasticboy/vim-markdown'
 Plug 'terryma/vim-multiple-cursors'
@@ -61,9 +69,6 @@ Plug 'tpope/vim-sleuth'
 Plug 'honza/vim-snippets'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
-
-" problems on windows?
-Plug 'craigemery/vim-autotag'
 
 "" Color schemes
 Plug 'romainl/Apprentice'
@@ -234,7 +239,7 @@ nnoremap <silent> ZD :cd %:p:h<CR>
 
 " # some useful funcs
 " session
-noremap <F2> :mksession!<CR>
+noremap <F2> :mksession! session.vim<CR>
 noremap <silent> <C-F2> :source session.vim<CR>
 " make
 nnoremap <F7> :make<CR>
@@ -464,6 +469,12 @@ let NERDTreeShowHidden=1
 "" UltiSnips
 let g:UltiSnipsEditSplit = 'vertical'
 let g:UltiSnipsSnippetDirectories = ["UltiSnips", "my-snips"]
+
+"" vim-autotag
+let g:autotagmaxTagsFileSize = 1024 * 1024 * 1024 " 1 GB
+
+"" vim-gutentags
+let g:gutentags_generate_on_new=0
 
 "" vim-move
 
