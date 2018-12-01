@@ -21,7 +21,7 @@ endfunction
 """""""""""""""""""""""""
 "  Plugins (vim-plug)  "
 """""""""""""""""""""""""
-" check vim-plug is installed
+" install vim-plug if not found
 if !s:is_win && empty(glob($VIMHOME.'/autoload/plug.vim'))
     !wget -P ~/.vim/autoload/
             \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -34,41 +34,60 @@ call plug#begin('~/.vim/plugged')
 
 " Make sure you use single quotes
 "" General
+Plug 'roxma/nvim-yarp' | Plug 'roxma/vim-hug-neovim-rpc'
+Plug 'qpkorr/vim-bufkill'
+Plug 'embear/vim-localvimrc'
+Plug 'plasticboy/vim-markdown'
+Plug 'tpope/vim-sensible'
+Plug 'tpope/vim-sleuth'
+
+"" C/Cpp
+Plug 'octol/vim-cpp-enhanced-highlight'
+
+"" Code check
 Plug 'w0rp/ale'
-Plug 'jiangmiao/auto-pairs'
-Plug 'Shougo/denite.nvim'
+
+"" Completion
 Plug 'Shougo/deoplete.nvim'
+Plug 'SirVer/ultisnips'
+Plug 'ludovicchabant/vim-gutentags'
+Plug 'honza/vim-snippets'
+
+"" Editing
+Plug 'jiangmiao/auto-pairs'
+Plug 'tomtom/tcomment_vim'
+Plug 'junegunn/vim-easy-align'
+Plug 'easymotion/vim-easymotion'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-unimpaired'
+
+"" Files
 Plug 'junegunn/fzf'
 Plug 'tweekmonster/fzf-filemru'
 Plug 'junegunn/fzf.vim'
-Plug 'davidhalter/jedi-vim'
 Plug 'scrooloose/nerdtree'
-Plug 'roxma/nvim-yarp' | Plug 'roxma/vim-hug-neovim-rpc'
+
+"" Git/VCS
+Plug 'tpope/vim-fugitive'
+Plug 'mhinz/vim-signify'
+
+"" Interface
+Plug 'Shougo/denite.nvim'
 Plug 'majutsushi/tagbar' " requires ctags
-Plug 'tomtom/tcomment_vim'
-Plug 'SirVer/ultisnips'
 Plug 'bling/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'ntpeters/vim-better-whitespace'
 Plug 'bling/vim-bufferline'
-Plug 'qpkorr/vim-bufkill'
-Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'ryanoasis/vim-devicons'
-Plug 'junegunn/vim-easy-align'
-Plug 'easymotion/vim-easymotion'
-Plug 'tpope/vim-fugitive'
-Plug 'ludovicchabant/vim-gutentags'
+
+"" Python
+Plug 'davidhalter/jedi-vim'
+
+"" Visuals
+Plug 'ntpeters/vim-better-whitespace'
 Plug 'nathanaelkane/vim-indent-guides'
-Plug 'embear/vim-localvimrc'
-Plug 'plasticboy/vim-markdown'
-Plug 'terryma/vim-multiple-cursors'
-Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-sensible'
-Plug 'mhinz/vim-signify'
-Plug 'tpope/vim-sleuth'
-Plug 'honza/vim-snippets'
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-unimpaired'
+Plug 'andymass/vim-matchup'
 
 "" Color schemes
 Plug 'romainl/Apprentice'
@@ -86,11 +105,11 @@ call plug#end()
 """""""""""""
 "  Visuals  "
 """""""""""""
-syntax enable
-colorscheme gruvbox
+set t_Co=256
 set background=dark
 set cursorline     " highlight current line
-set t_Co=256
+colorscheme gruvbox
+syntax enable
 
 """"""""""""
 "  Indent  "
@@ -108,7 +127,8 @@ set tabstop=4      " number of visual spaces per TAB
 "  Completion  "
 """"""""""""""""
 set completeopt=menuone,preview,noinsert " for autocomplete plugins
-set wildmenu     " visual autocomplete for command menu
+set wildignorecase " ignore case for command mode
+set wildmenu       " visual autocomplete for command menu
 set wildmode=longest:full,full
 
 """"""""""
@@ -117,11 +137,10 @@ set wildmode=longest:full,full
 set cf                    " ask confirm instead of failing
 set clipboard=unnamedplus " to cp to and paste from system buffer
 set encoding=utf-8
-set laststatus=2          " show status line
+set hidden                " allow buffer switching without saving
 set lazyredraw            " redraw only when we need to.
 set linebreak             " wrap full words, do not split
 set modeline              " enable file specific settings
-set noshowmode            " hide active mode name
 set number                " line numbers
 set shellslash            " use UNIX like directory separator
 set showcmd               " show (partial) command in status line
@@ -154,7 +173,8 @@ set foldcolumn=1  " enable fold column
 highlight FoldColumn guibg=bg guifg=bg
 " for gitgutter/signify
 highlight SignColumn guibg=bg
-set hidden        " allow buffer switching without saving
+set laststatus=2  " show status line
+set noshowmode    " hide active mode name
 set showtabline=2 " always show tabline
 
 """""""""
@@ -212,7 +232,13 @@ nnoremap Y y$
 " turn off search highlight (press enter twice)
 nnoremap <CR> :noh<CR>
 
-" # buffers
+""" .vimrc
+" reloads the saved $MYVIMRC
+nnoremap <silent> <leader>vs :source $MYVIMRC<CR>
+" opens $MYVIMRC for editing
+nnoremap <silent> <leader>v :e $MYVIMRC<CR>
+
+""" buffers
 " CTRL-i = CTRL-Tab now
 nnoremap <silent> <C-Tab> :bnext<CR>
 nnoremap <silent> <S-Tab> :bprev<CR>
@@ -220,16 +246,16 @@ nnoremap <silent> <C-F4> :BD<CR>
 nnoremap <silent> ZBD :BD<CR>
 nnoremap <silent> <M-w> :BD<CR>
 nnoremap <silent> ZBU :BU<CR>
+
 " recently viewed buffer
 nnoremap <silent> <M-q> :b#<CR>
 
-" # .vimrc
-" reloads the saved $MYVIMRC
-nnoremap <silent> <leader>vs :source $MYVIMRC<CR>
-" opens $MYVIMRC for editing
-nnoremap <silent> <leader>v :e $MYVIMRC<CR>
+""" completion
+imap <expr> <C-n>   pumvisible() ? "\<Down>" : "\<C-n>"
+imap <expr> <C-p>   pumvisible() ? "\<Up>" : "\<C-p>"
+imap <expr> <space> pumvisible() ? "\<C-n>" : " "
 
-" # files
+""" files
 " write file
 nnoremap <C-s> :w<CR>
 " reopen file
@@ -237,7 +263,16 @@ nnoremap <silent> ZE :e<CR>
 " goto file directory
 nnoremap <silent> ZD :cd %:p:h<CR>
 
-" # some useful funcs
+""" insert mode
+" move word back, front
+inoremap <C-left> <C-o>B
+inoremap <C-right> <C-o>W
+" paste for INSERT and COMMAND modes
+noremap! <C-S-v> <C-r>+
+" switch case
+inoremap <M-u> <C-[>g~iwea
+
+""" useful funcs
 " session
 noremap <F2> :mksession! session.vim<CR>
 noremap <silent> <C-F2> :source session.vim<CR>
@@ -250,7 +285,7 @@ nnoremap <F5> :!./%:r<CR>
 nnoremap <C-F5> :w<CR>:make && ./%:r<CR>
 inoremap <C-F5> <ESC>:w<CR>:make && ./%:r<CR>
 
-" # windows
+""" windows
 " close window
 nnoremap <silent> q :close<CR>
 " selection
@@ -265,45 +300,23 @@ noremap <silent> <M-j> :wincmd j<CR>
 noremap <silent> <M-k> :wincmd k<CR>
 noremap <silent> <M-l> :wincmd l<CR>
 
-" # insert mode
-" move word back, front
-inoremap <C-left> <C-o>B
-inoremap <C-right> <C-o>W
-
-" # completion
-imap <expr> <C-n>   pumvisible() ? "\<Down>" : "\<C-n>"
-imap <expr> <C-p>   pumvisible() ? "\<Up>" : "\<C-p>"
-imap <expr> <space> pumvisible() ? "\<C-n>" : "\<CR>"
-
-" # other
+""" other
 " macro
 nnoremap <leader>q q
+
 " open/closes folds
 nnoremap zz za
 nnoremap za zz
+
 " diff
 nnoremap <leader>dp :diffput<CR>
 nnoremap <leader>dg :diffget<CR>
+
 " indents
 nnoremap <silent> <M->> :><CR>
 nnoremap <silent> <M-<> :<<CR>
 
-" # Could not work in terminal
-" Paste for Insert and Command modes
-noremap! <C-S-v> <C-r>+
-" switch case
-inoremap <M-u> <C-[>g~iwea
-
 "" Plugins
-""" vim-plug
-nnoremap <silent> <F1> :call PlugHelp()<CR>
-
-""" NERDTree
-nnoremap <leader>n :NERDTreeToggle<cr>
-
-""" UltiSnips
-let g:UltiSnipsExpandTrigger='<c-q>'
-
 """ ALE
 nmap <silent> <C-k> <Plug>(ale_previous_wrap)
 nmap <silent> <C-j> <Plug>(ale_next_wrap)
@@ -311,20 +324,12 @@ nmap <silent> <C-j> <Plug>(ale_next_wrap)
 """ deoplete
 inoremap <silent><expr> <C-Space>
             \ pumvisible() ? "\<C-n>" :
+            \ <SID>check_back_space() ? "\<TAB>" :
             \ deoplete#mappings#manual_complete()
-
-
-" <C-h>, <BS>: close popup and delete backword char.
-" inoremap <expr><C-h> deoplete#smart_close_popup()."\<C-h>"
-
-""" fzf
-noremap <silent> <C-p> :FZF<cr>
-" fzf selected word
-noremap <silent> <leader>fw :FZF -q <cword><CR>
-" fzf history
-noremap <silent> <C-h> :History<cr>
-" fzf buffers
-noremap <silent> <leader>fb :Buffers<cr>
+            function! s:check_back_space() abort "{{{
+            let col = col('.') - 1
+            return !col || getline('.')[col - 1]  =~ '\s'
+            endfunction"}}}
 
 """ EasyAlign
 " Start interactive EasyAlign in visual mode (e.g. vipga)
@@ -332,14 +337,32 @@ xmap ga <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
 
+""" fzf
+noremap <silent> <C-p> :FZF<cr>
+" fzf history
+noremap <silent> <C-h> :History<cr>
+" fzf selected word
+noremap <silent> <leader>fw :FZF -q <cword><CR>
+" fzf buffers
+noremap <silent> <leader>fb :Buffers<cr>
+
+""" NERDTree
+nnoremap <leader>n :NERDTreeToggle<cr>
+
 """ tagbar
 noremap <leader>t :Tagbar<CR>
+
+""" UltiSnips
+let g:UltiSnipsExpandTrigger = '<c-q>'
 
 """ Unimpaired
 nmap <C-S-up> <Plug>unimpairedMoveUp
 nmap <C-S-down> <Plug>unimpairedMoveDown
 vmap <C-S-up> <Plug>unimpairedMoveSelectionUpgv
 vmap <C-S-down> <Plug>unimpairedMoveSelectionDowngv
+
+""" vim-plug
+nnoremap <silent> <F1> :call PlugHelp()<CR>
 
 """"""""""""""""""""""
 "  Plugins settings  "
@@ -401,6 +424,11 @@ let g:ale_python_pylint_executable = 'pylint3'
 let g:ale_sign_error = ''
 let g:ale_sign_warning = ''
 
+"" auto-pairs
+" TODO: fix issues with deoplete
+" let g:AutoPairsMapCR=0
+" inoremap <expr><CR> pumvisible() ? deoplete#mappings#close_popup() : "\<CR><SID>AutoPairsReturn"
+
 "" better-whitespace
 highlight ExtraWhitespace ctermbg=darkred guibg=#990000
 
@@ -461,8 +489,6 @@ let g:indent_guides_enable_on_vim_startup = 1
 let g:indent_guides_start_level = 1
 let g:indent_guides_guide_size = 1
 
-"" jedi-vim
-
 "" NERDTree
 let NERDTreeShowHidden=1
 
@@ -476,7 +502,8 @@ let g:autotagmaxTagsFileSize = 1024 * 1024 * 1024 " 1 GB
 "" vim-gutentags
 let g:gutentags_generate_on_new=0
 
-"" vim-move
+"" vim-matchup
+let g:matchup_override_vimtex = 1
 
 "" vim-multiple-cursors
 let g:multi_cursor_prev_key = '<C-[>'

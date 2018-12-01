@@ -1,0 +1,17 @@
+# vim:ft=snippets:
+
+global !p
+def fix_indent(snip):
+	vim.eval('feedkeys("\<c-f>")')
+endglobal
+
+# Fixing extra indent with vimtex
+post_expand "fix_indent(snip)"
+snippet it "Individual item" b
+\item $0
+endsnippet
+
+# Inline Equation
+snippet mi "Inline Math: \( ... \)"
+\\($0\\)
+endsnippet
