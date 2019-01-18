@@ -84,6 +84,9 @@ Plug 'ryanoasis/vim-devicons'
 "" Python
 Plug 'davidhalter/jedi-vim'
 
+"" Utils
+Plug 'albfan/ag.vim'
+
 "" Visuals
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'nathanaelkane/vim-indent-guides'
@@ -118,6 +121,7 @@ set autoindent     " indent whe pasting
 set cindent        " stricter rules for C programs
 set colorcolumn=80 " maximum column width indicator
 set expandtab      " spaces instead of TABS in INSERT mode
+set linespace=1    " linespace height in pixels
 set shiftwidth=4   " indenting is 4 spaces
 set smartindent    " does the right thing (mostly) in programs
 set softtabstop=4  " number of spaces in tab when editing
