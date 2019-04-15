@@ -3,7 +3,7 @@
 """""""""""""
 let $VIMHOME = '$HOME/.vim'
 let $VIMCUSTOM = '$VIMHOME/local' " host specific configs
-let s:is_win = has("win64") || has("win32") || has("win16")
+let s:is_win = has('win64') || has('win32') || has('win16')
 
 if s:is_win
     set runtimepath+=$HOME/.vim
@@ -14,7 +14,7 @@ endif
 function! s:lsource(filename)
     let expfilename = expand(a:filename)
     if filereadable(glob(expfilename))
-        exec "source " . expfilename
+        exec 'source ' . expfilename
     endif
 endfunction
 
@@ -22,36 +22,37 @@ endfunction
 "  Plugins (vim-plug)  "
 """""""""""""""""""""""""
 " install vim-plug if not found
-if !s:is_win && empty(glob($VIMHOME.'/autoload/plug.vim'))
+if !s:is_win && empty(glob($VIMHOME . '/autoload/plug.vim'))
     !wget -P ~/.vim/autoload/
             \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
 " Specify a directory for plugins
-" - Avoid using standard Vim directory names like 'plugin'
+" avoid using standard Vim directory names like 'plugin'
 call plug#begin('~/.vim/plugged')
 
 " Make sure you use single quotes
 "" General
-Plug 'roxma/nvim-yarp' | Plug 'roxma/vim-hug-neovim-rpc'
 Plug 'qpkorr/vim-bufkill'
 Plug 'embear/vim-localvimrc'
-Plug 'plasticboy/vim-markdown'
 Plug 'tpope/vim-sensible'
-Plug 'tpope/vim-sleuth'
 
 "" C/Cpp
 Plug 'octol/vim-cpp-enhanced-highlight'
-
-"" Code check
+"" Code
 Plug 'w0rp/ale'
+Plug 'tpope/vim-sleuth'
 
 "" Completion
 Plug 'Shougo/deoplete.nvim'
 Plug 'SirVer/ultisnips'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'honza/vim-snippets'
+
+"" Dependencies
+Plug 'roxma/nvim-yarp'
+Plug 'roxma/vim-hug-neovim-rpc'
 
 "" Editing
 Plug 'jiangmiao/auto-pairs'
@@ -81,6 +82,9 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'bling/vim-bufferline'
 Plug 'ryanoasis/vim-devicons'
 
+"" Markdown
+Plug 'plasticboy/vim-markdown'
+
 "" Python
 Plug 'davidhalter/jedi-vim'
 
@@ -92,18 +96,44 @@ Plug 'ntpeters/vim-better-whitespace'
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'andymass/vim-matchup'
 
-"" Color schemes
+"" Colors
+Plug 'tsiemens/vim-aftercolors' " customize color schemes
+" schemes
 Plug 'romainl/Apprentice'
 Plug 'morhetz/gruvbox'
-Plug 'tomasr/molokai'
 Plug 'junegunn/seoul256.vim'
-Plug 'lifepillar/vim-solarized8'
 
 "" Local plugins
 call s:lsource($VIMCUSTOM . '/plugs.vim')
 
 "" Initialize plugin system
 call plug#end()
+
+""""""""""""""""""
+"  Autocommands  "
+""""""""""""""""""
+" Neatly highlight left column
+function! s:set_margin_col()
+    let colbg = synIDattr(hlID('LineNr'), 'bg')
+    " LineNr bg is not defined in a colorscheme -
+    " - use default background color
+    if empty(colbg)
+        let colbg='bg'
+    endif
+    execute('highlight FoldColumn guifg=' . colbg . ' guibg=' . colbg)
+    execute('highlight SignColumn guibg=' . colbg)
+endfunction
+augroup hide_fold_col
+    autocmd!
+    autocmd ColorScheme * call s:set_margin_col()
+augroup END
+
+" Ignore case only in command mode
+augroup dynamic_smartcase
+    autocmd!
+    autocmd CmdLineEnter : set nosmartcase
+    autocmd CmdLineLeave : set smartcase
+augroup END
 
 """""""""""""
 "  Visuals  "
@@ -124,6 +154,7 @@ set expandtab      " spaces instead of TABS in INSERT mode
 set linespace=1    " linespace height in pixels
 set shiftwidth=4   " indenting is 4 spaces
 set smartindent    " does the right thing (mostly) in programs
+set smarttab       " tab len according to tab options in other places
 set softtabstop=4  " number of spaces in tab when editing
 set tabstop=4      " number of visual spaces per TAB
 
@@ -171,12 +202,7 @@ set foldmethod=indent     " fold based on indent level
 """"""""
 "  UI  "
 """"""""
-" left padding hack
-set foldcolumn=1  " enable fold column
-" and hide text
-highlight FoldColumn guibg=bg guifg=bg
-" for gitgutter/signify
-highlight SignColumn guibg=bg
+set foldcolumn=1  " enable fold column for left margin
 set laststatus=2  " show status line
 set noshowmode    " hide active mode name
 set showtabline=2 " always show tabline
@@ -193,12 +219,12 @@ if has('gui')
     "  if wmctrl is not installed
     "  set lines=999 columns=999
     if s:is_win
-        au GUIEnter * simalt ~x
+        autocmd GUIEnter * simalt ~x
         set guifont=FuraCode\ NF:h11
     else
         augroup maximizewindow
             autocmd!
-            autocmd VimEnter * call system('wmctrl -i -b add,maximized_vert,maximized_horz -r '.v:windowid)
+            autocmd VimEnter * call system('wmctrl -i -b add,maximized_vert,maximized_horz -r ' . v:windowid)
         augroup END
         set guifont=Hack\ Nerd\ Font
     endif
@@ -246,13 +272,16 @@ nnoremap <silent> <leader>v :e $MYVIMRC<CR>
 " CTRL-i = CTRL-Tab now
 nnoremap <silent> <C-Tab> :bnext<CR>
 nnoremap <silent> <S-Tab> :bprev<CR>
-nnoremap <silent> <C-F4> :BD<CR>
-nnoremap <silent> ZBD :BD<CR>
-nnoremap <silent> <M-w> :BD<CR>
+nnoremap <silent> <C-F4> :BW<CR>
+nnoremap <silent> <M-w> :BW<CR>
+nnoremap <silent> ZBD :BW<CR>
 nnoremap <silent> ZBU :BU<CR>
-
 " recently viewed buffer
 nnoremap <silent> <M-q> :b#<CR>
+
+""" command mode
+" shell life
+cmap <C-a> <Home>
 
 """ completion
 imap <expr> <C-n>   pumvisible() ? "\<Down>" : "\<C-n>"
@@ -272,9 +301,11 @@ nnoremap <silent> ZD :cd %:p:h<CR>
 inoremap <C-left> <C-o>B
 inoremap <C-right> <C-o>W
 " paste for INSERT and COMMAND modes
-noremap! <C-S-v> <C-r>+
+inoremap <C-S-v> <C-r>+
 " switch case
 inoremap <M-u> <C-[>g~iwea
+" delete indent
+imap <S-Tab> <C-d>
 
 """ useful funcs
 " session
@@ -309,8 +340,8 @@ noremap <silent> <M-l> :wincmd l<CR>
 nnoremap <leader>q q
 
 " open/closes folds
-nnoremap zz za
-nnoremap za zz
+noremap zz za
+noremap za zz
 
 " diff
 nnoremap <leader>dp :diffput<CR>
@@ -322,8 +353,8 @@ nnoremap <silent> <M-<> :<<CR>
 
 "" Plugins
 """ ALE
-nmap <silent> <C-k> <Plug>(ale_previous_wrap)
-nmap <silent> <C-j> <Plug>(ale_next_wrap)
+nnoremap <silent> <C-k> <Plug>(ale_previous_wrap)
+nnoremap <silent> <C-j> <Plug>(ale_next_wrap)
 
 """ deoplete
 inoremap <silent><expr> <C-Space>
@@ -351,7 +382,7 @@ noremap <silent> <leader>fw :FZF -q <cword><CR>
 noremap <silent> <leader>fb :Buffers<cr>
 
 """ NERDTree
-nnoremap <leader>n :NERDTreeToggle<cr>
+nnoremap <silent> <leader>n :NERDTreeFocus<cr>
 
 """ tagbar
 noremap <leader>t :Tagbar<CR>
@@ -360,10 +391,10 @@ noremap <leader>t :Tagbar<CR>
 let g:UltiSnipsExpandTrigger = '<c-q>'
 
 """ Unimpaired
-nmap <C-S-up> <Plug>unimpairedMoveUp
-nmap <C-S-down> <Plug>unimpairedMoveDown
-vmap <C-S-up> <Plug>unimpairedMoveSelectionUpgv
-vmap <C-S-down> <Plug>unimpairedMoveSelectionDowngv
+nmap <C-S-up> [e
+nmap <C-S-down> ]e
+vmap <C-S-up> [e
+vmap <C-S-down> ]e
 
 """ vim-plug
 nnoremap <silent> <F1> :call PlugHelp()<CR>
@@ -393,12 +424,6 @@ let g:airline#extensions#tabline#show_tab_type = 1
 let g:airline#extensions#bufferline#enabled = 1
 let g:airline#extensions#bufferline#overwrite_variables = 0
 
-let g:airline#extensions#ctrlp#show_adjacent_modes = 1
-let g:airline#extensions#ctrlp#color_template = 'insert'
-let g:airline#extensions#ctrlp#color_template = 'normal'
-let g:airline#extensions#ctrlp#color_template = 'visual'
-let g:airline#extensions#ctrlp#color_template = 'replace'
-
 let g:airline#extensions#ale#enabled = 1
 let g:airline#extensions#ale#error_symbol = '  '
 let g:airline#extensions#ale#warning_symbol = '  '
@@ -407,7 +432,6 @@ let airline#extensions#ale#close_lnum_symbol = ''
 
 let g:airline_exclude_preview=1
 
-" powerline symbols
 let g:airline_powerline_fonts=1
 let g:airline_theme='bubblegum'
 let g:airline_skip_empty_sections = 1
@@ -424,14 +448,14 @@ let g:airline_symbols.maxlinenr = ''
 
 "" ALE
 let g:ale_python_pylint_executable = 'pylint3'
-" let g:ale_statusline_format = ['☀️️ %d', '🕯️ %d', '']
 let g:ale_sign_error = ''
 let g:ale_sign_warning = ''
 
 "" auto-pairs
-" TODO: fix issues with deoplete
-" let g:AutoPairsMapCR=0
-" inoremap <expr><CR> pumvisible() ? deoplete#mappings#close_popup() : "\<CR><SID>AutoPairsReturn"
+let g:AutoPairsMapCR=0
+inoremap <silent> <expr><CR> pumvisible() ?
+            \ deoplete#mappings#close_popup() :
+            \ "<CR><C-R>=AutoPairsReturn()<CR>"
 
 "" better-whitespace
 highlight ExtraWhitespace ctermbg=darkred guibg=#990000
@@ -442,7 +466,7 @@ let g:bufferline_active_buffer_left = ' '
 let g:bufferline_active_buffer_right = ''
 let g:bufferline_modified = '*'
 let g:bufferline_rotate = 2
-let g:bufferline_fixed_index = 1 "always first
+let g:bufferline_fixed_index = 1 " always first
 let g:bufferline_pathshorten = 0
 
 "" denite
@@ -474,7 +498,7 @@ autocmd FileType python let g:deoplete#enable_at_startup = 0
 "" fzf
 " Match color scheme
 let g:fzf_colors =
-            \ { 'fg':    ['fg', 'Normal'],
+          \ { 'fg':      ['fg', 'Normal'],
             \ 'bg':      ['bg', 'Normal'],
             \ 'hl':      ['fg', 'Comment'],
             \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
@@ -504,7 +528,12 @@ let g:UltiSnipsSnippetDirectories = ["UltiSnips", "my-snips"]
 let g:autotagmaxTagsFileSize = 1024 * 1024 * 1024 " 1 GB
 
 "" vim-gutentags
+let g:gutentags_enabled=0
 let g:gutentags_generate_on_new=0
+
+"" vim-markdown
+" disable auto list items indent for 'o'
+let g:vim_markdown_new_list_item_indent = 0
 
 "" vim-matchup
 let g:matchup_override_vimtex = 1
@@ -518,9 +547,6 @@ let g:signify_realtime = 1
 let g:signify_sign_show_count = 0
 let g:signify_sign_show_text = 1
 let g:signify_vcs_list = [ 'git' ]
-highlight SignifySignAdd gui=bold guibg=bg guifg=#00af00 cterm=bold ctermfg=34
-highlight SignifySignChange gui=bold guibg=bg guifg=#ffaf5f cterm=bold ctermfg=215
-highlight SignifySignDelete gui=bold guibg=bg guifg=#d75f5f cterm=bold ctermfg=167
 
 """""""""""""""
 "  Filetypes  "
@@ -573,18 +599,18 @@ endfunction
 """ defines a foldtext
 function! VimFoldText()
     " handle special case of normal comment first
-    let s:info = '('.string(v:foldend-v:foldstart).' l)'
+    let s:info = '(' . string(v:foldend-v:foldstart) . ' l)'
     if v:foldlevel == 1
-        let s:line = ' ◇ '.getline(v:foldstart+1)[3:-2]
+        let s:line = ' ◇ ' . getline(v:foldstart+1)[3:-2]
     elseif v:foldlevel == 2
-        let s:line = '   ●  '.getline(v:foldstart)[3:]
+        let s:line = '   ●  ' . getline(v:foldstart)[3:]
     elseif v:foldlevel == 3
-        let s:line = '     ▪ '.getline(v:foldstart)[4:]
+        let s:line = '     ▪ ' . getline(v:foldstart)[4:]
     endif
     if strwidth(s:line) > 80 - len(s:info) - 3
-        return s:line[:79-len(s:info)-3+len(s:line)-strwidth(s:line)].'...'.s:info
+        return s:line[:79-len(s:info)-3+len(s:line)-strwidth(s:line)] . '...' . s:info
     else
-        return s:line.repeat(' ', 80 - strwidth(s:line) - len(s:info)).s:info
+        return s:line . repeat(' ', 80 - strwidth(s:line) - len(s:info)) . s:info
     endif
 endfunction
 
@@ -601,7 +627,7 @@ augroup END
 "" PlugHelp
 function! PlugHelp()
     let str = matchstr(getline('.'), "'\\zs[^']\\+\\ze'")
-    let str = fnamemodify(str, ":t")
+    let str = fnamemodify(str, ':t')
     let plug_dir = g:plug_home . '/' . str
 
     if isdirectory(plug_dir)
