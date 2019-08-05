@@ -2,7 +2,7 @@
 "  Defines  "
 """""""""""""
 let $VIMHOME = '$HOME/.vim'
-let $VIMCUSTOM = '$VIMHOME/local' " host specific configs
+let $VIMCUSTOM = '$HOME/.vim/local' " host specific configs
 let s:is_win = has('win64') || has('win32') || has('win16')
 
 if s:is_win
@@ -16,6 +16,12 @@ function! s:lsource(filename)
     if filereadable(glob(expfilename))
         exec 'source ' . expfilename
     endif
+endfunction
+
+" for manual completion trigger
+function! s:check_back_space() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~ '\s'
 endfunction
 
 """""""""""""""""""""""""
@@ -36,26 +42,21 @@ call plug#begin('~/.vim/plugged')
 "" General
 Plug 'qpkorr/vim-bufkill'
 Plug 'embear/vim-localvimrc'
+Plug 'sheerun/vim-polyglot'
 Plug 'tpope/vim-sensible'
 
-"" C/Cpp
-Plug 'octol/vim-cpp-enhanced-highlight'
 "" Code
 Plug 'w0rp/ale'
 Plug 'tpope/vim-sleuth'
 
 "" Completion
-Plug 'Shougo/deoplete.nvim'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'SirVer/ultisnips'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'honza/vim-snippets'
 
-"" Dependencies
-Plug 'roxma/nvim-yarp'
-Plug 'roxma/vim-hug-neovim-rpc'
-
 "" Editing
-Plug 'jiangmiao/auto-pairs'
+Plug 'tmsvg/pear-tree'
 Plug 'tomtom/tcomment_vim'
 Plug 'junegunn/vim-easy-align'
 Plug 'easymotion/vim-easymotion'
@@ -82,9 +83,6 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'bling/vim-bufferline'
 Plug 'ryanoasis/vim-devicons'
 
-"" Markdown
-Plug 'plasticboy/vim-markdown'
-
 "" Python
 Plug 'davidhalter/jedi-vim'
 
@@ -100,8 +98,11 @@ Plug 'andymass/vim-matchup'
 Plug 'tsiemens/vim-aftercolors' " customize color schemes
 " schemes
 Plug 'romainl/Apprentice'
-Plug 'morhetz/gruvbox'
-Plug 'junegunn/seoul256.vim'
+Plug 'zacanger/angr.vim'
+Plug 'gruvbox-community/gruvbox'
+Plug 'joshdick/onedark.vim'
+Plug 'srcery-colors/srcery-vim'
+Plug 'tyrannicaltoucan/vim-deep-space'
 
 "" Local plugins
 call s:lsource($VIMCUSTOM . '/plugs.vim')
@@ -113,22 +114,12 @@ call plug#end()
 "  Autocommands  "
 """"""""""""""""""
 " Neatly highlight left column
-function! s:set_margin_col()
-    let colbg = synIDattr(hlID('LineNr'), 'bg')
-    " LineNr bg is not defined in a colorscheme -
-    " - use default background color
-    if empty(colbg)
-        let colbg='bg'
-    endif
-    execute('highlight FoldColumn guifg=' . colbg . ' guibg=' . colbg)
-    execute('highlight SignColumn guibg=' . colbg)
-endfunction
 augroup hide_fold_col
     autocmd!
-    autocmd ColorScheme * call s:set_margin_col()
+    autocmd ColorScheme * call vimrc#set_margin_col()
 augroup END
 
-" Ignore case only in command mode
+" Ignore case for completion only in cmd mode
 augroup dynamic_smartcase
     autocmd!
     autocmd CmdLineEnter : set nosmartcase
@@ -138,9 +129,13 @@ augroup END
 """""""""""""
 "  Visuals  "
 """""""""""""
-set t_Co=256
-set background=dark
+set colorcolumn=80 " maximum column width indicator
 set cursorline     " highlight current line
+set foldcolumn=1  " enable fold column for left margin
+set laststatus=2  " show status line
+set noshowmode    " hide active mode name
+set showmatch             " highlight matching brackets
+set showtabline=2 " always show tabline
 colorscheme gruvbox
 syntax enable
 
@@ -149,14 +144,11 @@ syntax enable
 """"""""""""
 set autoindent     " indent whe pasting
 set cindent        " stricter rules for C programs
-set colorcolumn=80 " maximum column width indicator
 set expandtab      " spaces instead of TABS in INSERT mode
 set linespace=1    " linespace height in pixels
 set shiftwidth=4   " indenting is 4 spaces
-set smartindent    " does the right thing (mostly) in programs
 set smarttab       " tab len according to tab options in other places
 set softtabstop=4  " number of spaces in tab when editing
-set tabstop=4      " number of visual spaces per TAB
 
 """"""""""""""""
 "  Completion  "
@@ -169,18 +161,16 @@ set wildmode=longest:full,full
 """"""""""
 "  Misc  "
 """"""""""
-set cf                    " ask confirm instead of failing
+set confirm               " ask confirm instead of failing
 set clipboard=unnamedplus " to cp to and paste from system buffer
 set encoding=utf-8
 set hidden                " allow buffer switching without saving
 set lazyredraw            " redraw only when we need to.
 set linebreak             " wrap full words, do not split
-set modeline              " enable file specific settings
 set number                " line numbers
 set shellslash            " use UNIX like directory separator
 set showcmd               " show (partial) command in status line
-set showmatch             " highlight matching brackets
-set wrap                  " wrap enabled
+set updatetime=500
 
 """"""""""""""""""""""
 "  Search & Replace  "
@@ -198,14 +188,6 @@ set foldenable            " enable folding
 set foldlevelstart=10     " open most folds by default
 set foldnestmax=10        " 10 nested fold max
 set foldmethod=indent     " fold based on indent level
-
-""""""""
-"  UI  "
-""""""""
-set foldcolumn=1  " enable fold column for left margin
-set laststatus=2  " show status line
-set noshowmode    " hide active mode name
-set showtabline=2 " always show tabline
 
 """""""""
 "  GUI  "
@@ -235,58 +217,56 @@ endif
 """""""""""""""""""""""
 if s:is_win
     set clipboard=unnamed " copy to and paste from system buffer
+    let $VIMCONFIG = $VIMHOME " Windows uses 'vimfiles' as default
 endif
-
-""""""""""""""
-"  Commands  "
-""""""""""""""
 
 """"""""""""""""""
 "  Key mappings  "
 """"""""""""""""""
+"" General
 " Leader to SPACE
 let mapleader = " "
 let maplocalleader = ","
-
-"" General
 " Faster command mode
-nnoremap ; :
-nnoremap : ;
-vnoremap ; :
-vnoremap : ;
+noremap ; :
+noremap : ;
 " move through wrapped lines
 nnoremap j gj
 nnoremap k gk
 " yank same behavior as D, C
 nnoremap Y y$
+" multipaste
+" noremap <silent> <localleader>p "0p
+" dont overwrite register when replacing
+xnoremap <expr> p 'pgv"'.v:register.'y'
 " turn off search highlight (press enter twice)
-nnoremap <CR> :noh<CR>
+xnoremap <silent> <CR> :noh<CR>
 
 """ .vimrc
-" reloads the saved $MYVIMRC
-nnoremap <silent> <leader>vs :source $MYVIMRC<CR>
-" opens $MYVIMRC for editing
+" reload $MYVIMRC
+xnoremap <silent> <leader>vs :source $MYVIMRC<CR>
+" edit $MYVIMRC
 nnoremap <silent> <leader>v :e $MYVIMRC<CR>
 
 """ buffers
-" CTRL-i = CTRL-Tab now
+" CTRL-i = CTRL-Tab in vim
 nnoremap <silent> <C-Tab> :bnext<CR>
 nnoremap <silent> <S-Tab> :bprev<CR>
-nnoremap <silent> <C-F4> :BW<CR>
-nnoremap <silent> <M-w> :BW<CR>
-nnoremap <silent> ZBD :BW<CR>
-nnoremap <silent> ZBU :BU<CR>
+nnoremap <silent> <C-F4> :bw<CR>
+nnoremap <silent> <M-w> :bw<CR>
+nnoremap <silent> ZBD :bw<CR>
+nnoremap <silent> ZBU :bu<CR>
 " recently viewed buffer
 nnoremap <silent> <M-q> :b#<CR>
 
 """ command mode
+cnoremap <C-S-v> <C-r>*
 " shell life
-cmap <C-a> <Home>
+cnoremap <C-a> <Home>
 
 """ completion
-imap <expr> <C-n>   pumvisible() ? "\<Down>" : "\<C-n>"
-imap <expr> <C-p>   pumvisible() ? "\<Up>" : "\<C-p>"
-imap <expr> <space> pumvisible() ? "\<C-n>" : " "
+inoremap <expr> <Tab>   pumvisible() ? "<Down>" : "<Tab>"
+inoremap <expr> <S-Tab>   pumvisible() ? "<Up>" : "<C-d>"
 
 """ files
 " write file
@@ -300,25 +280,17 @@ nnoremap <silent> ZD :cd %:p:h<CR>
 " move word back, front
 inoremap <C-left> <C-o>B
 inoremap <C-right> <C-o>W
-" paste for INSERT and COMMAND modes
+" paste from system buffer
 inoremap <C-S-v> <C-r>+
 " switch case
 inoremap <M-u> <C-[>g~iwea
-" delete indent
-imap <S-Tab> <C-d>
 
 """ useful funcs
 " session
-noremap <F2> :mksession! session.vim<CR>
-noremap <silent> <C-F2> :source session.vim<CR>
-" make
-nnoremap <F7> :make<CR>
-inoremap <F7> <ESC>:w<CR>:make<CR>
+nnoremap <F2> :mksession! session.vim<CR>
+nnoremap <silent> <C-F2> :source session.vim<CR>
 " execute current file
 nnoremap <F5> :!./%:r<CR>
-" make and run
-nnoremap <C-F5> :w<CR>:make && ./%:r<CR>
-inoremap <C-F5> <ESC>:w<CR>:make && ./%:r<CR>
 
 """ windows
 " close window
@@ -334,6 +306,8 @@ noremap <silent> <M-h> :wincmd h<CR>
 noremap <silent> <M-j> :wincmd j<CR>
 noremap <silent> <M-k> :wincmd k<CR>
 noremap <silent> <M-l> :wincmd l<CR>
+" zoom window
+nnoremap <silent> <leader>z :call vimrc#zoom()<CR>
 
 """ other
 " macro
@@ -356,21 +330,30 @@ nnoremap <silent> <M-<> :<<CR>
 nnoremap <silent> <C-k> <Plug>(ale_previous_wrap)
 nnoremap <silent> <C-j> <Plug>(ale_next_wrap)
 
-""" deoplete
+""" better-whitespace
+noremap <leader>s :StripWhitespace<CR>
+
+""" bufkill
+nnoremap <silent> <C-F4> :BW<CR>
+nnoremap <silent> <M-w> :BW<CR>
+nnoremap <silent> ZBD :BW<CR>
+nnoremap <silent> ZBU :BU<CR>
+
+""" coc.nvim
 inoremap <silent><expr> <C-Space>
             \ pumvisible() ? "\<C-n>" :
-            \ <SID>check_back_space() ? "\<TAB>" :
-            \ deoplete#mappings#manual_complete()
-            function! s:check_back_space() abort "{{{
-            let col = col('.') - 1
-            return !col || getline('.')[col - 1]  =~ '\s'
-            endfunction"}}}
+            \ <SID>check_back_space() ? "\<SPACE>" :
+            \ coc#refresh()
 
 """ EasyAlign
 " Start interactive EasyAlign in visual mode (e.g. vipga)
 xmap ga <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
+
+""" EasyMotion
+map <localleader><localleader> <Plug>(easymotion-prefix)
+map <leader><leader> <Plug>(easymotion-s)
 
 """ fzf
 noremap <silent> <C-p> :FZF<cr>
@@ -383,6 +366,11 @@ noremap <silent> <leader>fb :Buffers<cr>
 
 """ NERDTree
 nnoremap <silent> <leader>n :NERDTreeFocus<cr>
+
+""" pear-tree
+imap <expr> <CR> pumvisible()  ? "<C-y>" : "<Plug>(PearTreeExpand)"
+imap <C-c> <Plug>(PearTreeFinishExpansion)
+imap <M-n> <Plug>(PearTreeJump)
 
 """ tagbar
 noremap <leader>t :Tagbar<CR>
@@ -397,7 +385,7 @@ vmap <C-S-up> [e
 vmap <C-S-down> ]e
 
 """ vim-plug
-nnoremap <silent> <F1> :call PlugHelp()<CR>
+nnoremap <silent> <F1> :call vimrc#plughelp()<CR>
 
 """"""""""""""""""""""
 "  Plugins settings  "
@@ -433,7 +421,6 @@ let airline#extensions#ale#close_lnum_symbol = ''
 let g:airline_exclude_preview=1
 
 let g:airline_powerline_fonts=1
-let g:airline_theme='bubblegum'
 let g:airline_skip_empty_sections = 1
 let g:airline_inactive_collapse=1
 
@@ -451,14 +438,8 @@ let g:ale_python_pylint_executable = 'pylint3'
 let g:ale_sign_error = ''
 let g:ale_sign_warning = ''
 
-"" auto-pairs
-let g:AutoPairsMapCR=0
-inoremap <silent> <expr><CR> pumvisible() ?
-            \ deoplete#mappings#close_popup() :
-            \ "<CR><C-R>=AutoPairsReturn()<CR>"
-
 "" better-whitespace
-highlight ExtraWhitespace ctermbg=darkred guibg=#990000
+highlight! def link ExtraWhitespace PMenuSel
 
 "" bufferline
 let g:bufferline_echo = 0
@@ -468,6 +449,8 @@ let g:bufferline_modified = '*'
 let g:bufferline_rotate = 2
 let g:bufferline_fixed_index = 1 " always first
 let g:bufferline_pathshorten = 0
+
+"" coc.nvim
 
 "" denite
 " let s:menus = {}
@@ -481,19 +464,6 @@ let g:bufferline_pathshorten = 0
 "             \ ['Split the window', 'vnew'],
 "             \ ['Open zsh menu', 'Denite menu:zsh'],
 "             \ ]
-
-"" deoplete
-let g:deoplete#enable_at_startup = 1
-
-call deoplete#custom#option({
-    \ 'auto_complete': v:false,
-    \ 'auto_complete_delay': 200,
-    \ 'complete_method': 'completefunc',
-    \ 'smart_case': v:false,
-    \ })
-
-" Jedi-vim compatibility issues
-autocmd FileType python let g:deoplete#enable_at_startup = 0
 
 "" fzf
 " Match color scheme
@@ -520,6 +490,11 @@ let g:indent_guides_guide_size = 1
 "" NERDTree
 let NERDTreeShowHidden=1
 
+"" pear-tree
+let g:pear_tree_smart_openers = 1
+let g:pear_tree_smart_closers = 1
+let g:pear_tree_smart_backspace = 1
+
 "" UltiSnips
 let g:UltiSnipsEditSplit = 'vertical'
 let g:UltiSnipsSnippetDirectories = ["UltiSnips", "my-snips"]
@@ -543,7 +518,7 @@ let g:multi_cursor_prev_key = '<C-[>'
 
 "" vim-signify
 let g:signify_line_highlight = 0
-let g:signify_realtime = 1
+let g:signify_realtime = 0
 let g:signify_sign_show_count = 0
 let g:signify_sign_show_text = 1
 let g:signify_vcs_list = [ 'git' ]
@@ -560,87 +535,8 @@ filetype plugin indent on " load filetype-specific indent files
 """"""""""""""""""
 call s:lsource($VIMCUSTOM . '/local.vimrc')
 
-"""""""""""""""
-"  Functions  "
-"""""""""""""""
-"" Autofolding .vimrc
-" see http://vimcasts.org/episodes/writing-a-custom-fold-expression/
-" vi.stackexchange.com/questions/3814/is-there-a-best-practice-to-fold-a-vimrc-file
-""" defines a foldlevel for each line of code
-function! VimFolds(lnum)
-    let s:thisline = getline(a:lnum)
-    if match(s:thisline, '^"" ') >= 0
-        return '>2'
-    endif
-    if match(s:thisline, '^""" ') >= 0
-        return '>3'
-    endif
-
-    let s:two_following_lines = 0
-    if line(a:lnum) + 2 <= line('$')
-        let s:line_1_after = getline(a:lnum+1)
-        let s:line_2_after = getline(a:lnum+2)
-        let s:two_following_lines = 1
-    endif
-    if !s:two_following_lines
-        return '='
-    endif
-else
-    if (match(s:thisline, '^"""""') >= 0) &&
-                \ (match(s:line_1_after, '^"  ') >= 0) &&
-                \ (match(s:line_2_after, '^""""') >= 0)
-        return '>1'
-    else
-        return '='
-    endif
-endif
-endfunction
-
-""" defines a foldtext
-function! VimFoldText()
-    " handle special case of normal comment first
-    let s:info = '(' . string(v:foldend-v:foldstart) . ' l)'
-    if v:foldlevel == 1
-        let s:line = ' ◇ ' . getline(v:foldstart+1)[3:-2]
-    elseif v:foldlevel == 2
-        let s:line = '   ●  ' . getline(v:foldstart)[3:]
-    elseif v:foldlevel == 3
-        let s:line = '     ▪ ' . getline(v:foldstart)[4:]
-    endif
-    if strwidth(s:line) > 80 - len(s:info) - 3
-        return s:line[:79-len(s:info)-3+len(s:line)-strwidth(s:line)] . '...' . s:info
-    else
-        return s:line . repeat(' ', 80 - strwidth(s:line) - len(s:info)) . s:info
-    endif
-endfunction
-
-""" set foldsettings automatically for vim files
-augroup fold_vimrc
-    autocmd!
-    autocmd FileType vim
-                \ setlocal foldmethod=expr |
-                \ setlocal foldexpr=VimFolds(v:lnum) |
-                \ setlocal foldtext=VimFoldText() |
-    "              \ set foldcolumn=2 foldminlines=2
-augroup END
-
-"" PlugHelp
-function! PlugHelp()
-    let str = matchstr(getline('.'), "'\\zs[^']\\+\\ze'")
-    let str = fnamemodify(str, ':t')
-    let plug_dir = g:plug_home . '/' . str
-
-    if isdirectory(plug_dir)
-        let globbed = glob(plug_dir . '/[Rr][Ee][Aa][Dd][Mm][Ee]*')
-
-        if strlen(globbed) > 0
-            let readme = split(globbed, '\n')[0]
-            if filereadable(readme)
-                execute 'vsplit | view ' . readme
-                return 0
-            endif
-        endif
-    endif
-
-    return -1
-endfunction
+""""""""""""""""
+"  Vimrc fold  "
+""""""""""""""""
+setlocal modelineexpr
+" vim:foldmethod=expr:foldexpr=vimrc#folds(v\:lnum):foldtext=vimrc#foldtext()
