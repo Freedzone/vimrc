@@ -129,6 +129,7 @@ augroup END
 """""""""""""
 "  Visuals  "
 """""""""""""
+set background=dark
 set colorcolumn=80 " maximum column width indicator
 set cursorline     " highlight current line
 set foldcolumn=1  " enable fold column for left margin
