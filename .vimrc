@@ -116,9 +116,9 @@ call plug#end()
 " Neatly highlight left column
 augroup hide_fold_col
     autocmd!
-    autocmd ColorScheme * call vimrc#set_margin_col()
+    autocmd ColorScheme * call vimrc#hi_margin_col()
     " color is not set until GUI is initialized, need extra autocmd
-    autocmd GUIEnter * call vimrc#set_margin_col()
+    autocmd GUIEnter * call vimrc#hi_margin_col()
 augroup END
 
 " Ignore case for completion only in cmd mode
