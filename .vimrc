@@ -117,6 +117,8 @@ call plug#end()
 augroup hide_fold_col
     autocmd!
     autocmd ColorScheme * call vimrc#set_margin_col()
+    " color is not set until GUI is initialized, need extra autocmd
+    autocmd GUIEnter * call vimrc#set_margin_col()
 augroup END
 
 " Ignore case for completion only in cmd mode
@@ -126,17 +128,25 @@ augroup dynamic_smartcase
     autocmd CmdLineLeave : set smartcase
 augroup END
 
+""""""""""""""
+"  Commands  "
+""""""""""""""
+" Get syntax group under cursor
+command! GetSynGroup echo "hi<" . synIDattr(synID(line("."),col("."),1),"name")
+            \ . '> trans<' . synIDattr(synID(line("."),col("."),0),"name")
+            \ . "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"
+
 """""""""""""
 "  Visuals  "
 """""""""""""
-set background=dark
-set colorcolumn=80 " maximum column width indicator
-set cursorline     " highlight current line
-set foldcolumn=1  " enable fold column for left margin
-set laststatus=2  " show status line
-set noshowmode    " hide active mode name
-set showmatch             " highlight matching brackets
-set showtabline=2 " always show tabline
+set background=dark " required for dualed colorschemes
+set colorcolumn=80  " maximum column width indicator
+set cursorline      " highlight current line
+set foldcolumn=1    " enable fold column for left margin
+set laststatus=2    " show status line
+set noshowmode      " hide active mode name
+set showmatch       " highlight matching brackets
+set showtabline=2   " show tabs
 colorscheme gruvbox
 syntax enable
 
@@ -193,7 +203,7 @@ set foldmethod=indent     " fold based on indent level
 """""""""
 "  GUI  "
 """""""""
-if has('gui')
+if has('gui_running')
     set guioptions-=T
     set guioptions-=e
     set winaltkeys=no
@@ -217,8 +227,8 @@ endif
 "  Platform specific  "
 """""""""""""""""""""""
 if s:is_win
+    let $VIMCONFIG = $VIMHOME " Windows uses 'vimfiles' as default, so change
     set clipboard=unnamed " copy to and paste from system buffer
-    let $VIMCONFIG = $VIMHOME " Windows uses 'vimfiles' as default
 endif
 
 """"""""""""""""""
@@ -236,16 +246,14 @@ nnoremap j gj
 nnoremap k gk
 " yank same behavior as D, C
 nnoremap Y y$
-" multipaste
-" noremap <silent> <localleader>p "0p
 " dont overwrite register when replacing
 xnoremap <expr> p 'pgv"'.v:register.'y'
 " turn off search highlight (press enter twice)
-xnoremap <silent> <CR> :noh<CR>
+nnoremap <silent> <CR> :noh<CR>
 
 """ .vimrc
 " reload $MYVIMRC
-xnoremap <silent> <leader>vs :source $MYVIMRC<CR>
+nnoremap <silent> <leader>vs :source $MYVIMRC<CR>
 " edit $MYVIMRC
 nnoremap <silent> <leader>v :e $MYVIMRC<CR>
 
@@ -261,7 +269,8 @@ nnoremap <silent> ZBU :bu<CR>
 nnoremap <silent> <M-q> :b#<CR>
 
 """ command mode
-cnoremap <C-S-v> <C-r>*
+cnoremap <C-v> <C-r>*
+cnoremap <C-b> <C-a>
 " shell life
 cnoremap <C-a> <Home>
 
@@ -500,16 +509,9 @@ let g:pear_tree_smart_backspace = 1
 let g:UltiSnipsEditSplit = 'vertical'
 let g:UltiSnipsSnippetDirectories = ["UltiSnips", "my-snips"]
 
-"" vim-autotag
-let g:autotagmaxTagsFileSize = 1024 * 1024 * 1024 " 1 GB
-
 "" vim-gutentags
 let g:gutentags_enabled=0
 let g:gutentags_generate_on_new=0
-
-"" vim-markdown
-" disable auto list items indent for 'o'
-let g:vim_markdown_new_list_item_indent = 0
 
 "" vim-matchup
 let g:matchup_override_vimtex = 1
