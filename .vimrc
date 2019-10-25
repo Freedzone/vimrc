@@ -83,6 +83,9 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'bling/vim-bufferline'
 Plug 'ryanoasis/vim-devicons'
 
+"" Languages
+Plug 'Freedzone/kerbovim'
+
 "" Python
 Plug 'davidhalter/jedi-vim'
 
@@ -181,7 +184,7 @@ set linebreak             " wrap full words, do not split
 set number                " line numbers
 set shellslash            " use UNIX like directory separator
 set showcmd               " show (partial) command in status line
-set updatetime=500
+set updatetime=300
 
 """"""""""""""""""""""
 "  Search & Replace  "
@@ -190,7 +193,6 @@ set hlsearch              " highlight matches
 set ignorecase
 set incsearch             " search as characters are entered
 set smartcase             " if uppercase character inputed -> case sensitive
-set wildignorecase
 
 """""""""""
 "  Folds  "
@@ -337,8 +339,8 @@ nnoremap <silent> <M-<> :<<CR>
 
 "" Plugins
 """ ALE
-nnoremap <silent> <C-k> <Plug>(ale_previous_wrap)
-nnoremap <silent> <C-j> <Plug>(ale_next_wrap)
+nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+nmap <silent> <C-j> <Plug>(ale_next_wrap)
 
 """ better-whitespace
 noremap <leader>s :StripWhitespace<CR>
@@ -445,8 +447,16 @@ let g:airline_symbols.maxlinenr = ''
 
 "" ALE
 let g:ale_python_pylint_executable = 'pylint3'
-let g:ale_sign_error = ''
-let g:ale_sign_warning = ''
+let g:ale_sign_error = ''
+let g:ale_sign_warning = g:ale_sign_error
+let g:ale_sign_info = g:ale_sign_error
+let g:ale_sign_style_error = ''
+let g:ale_sign_style_warning = g:ale_sign_style_error
+" let g:ale_sign_error = ''
+" let g:ale_sign_warning = ''
+" let g:ale_sign_info = ''
+" let g:ale_sign_style_error = ''
+" let g:ale_sign_style_warning = ''
 
 "" better-whitespace
 highlight! def link ExtraWhitespace PMenuSel

@@ -1,4 +1,7 @@
 {
+    "diagnostic": {
+        "displayByAle": true
+    },
     "suggest": {
         "completionItemKindLabels": {
             "class": "\uf0e8",

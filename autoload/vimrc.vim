@@ -50,18 +50,28 @@ function! vimrc#foldtext()
     endif
 endfunction
 
-" Highlight Sign and Fold column
-function! vimrc#hi_margin_col()
+function vimrc#getcolor_margin_col()
     let colbg = synIDattr(hlID('LineNr'), 'bg')
     " LineNr bg is not defined in a colorscheme -
     " - use default background color
     if empty(colbg)
         let bg = synIDattr(hlID('Normal'), 'bg')
         if empty(bg)
-            return
+            return v:none
         else
             let colbg = bg
         endif
+    endif
+
+    return colbg
+endfunction
+
+" Highlight Sign and Fold column
+function! vimrc#hi_margin_col()
+    let colbg = vimrc#getcolor_margin_col()
+
+    if empty(colbg)
+        return
     endif
     if has('gui_running')
         execute('highlight FoldColumn guifg=' . colbg . ' guibg=' . colbg)
