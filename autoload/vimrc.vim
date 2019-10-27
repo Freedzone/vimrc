@@ -20,16 +20,13 @@ function! vimrc#folds(lnum)
     endif
     if !s:two_following_lines
         return '='
-    endif
-else
-    if (match(s:thisline, '^"""""') >= 0) &&
+    elseif (match(s:thisline, '^"""""') >= 0) &&
                 \ (match(s:line_1_after, '^"  ') >= 0) &&
                 \ (match(s:line_2_after, '^""""') >= 0)
         return '>1'
     else
         return '='
     endif
-endif
 endfunction
 
 " defines a foldtext

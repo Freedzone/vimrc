@@ -4,6 +4,7 @@
 let $VIMHOME = '$HOME/.vim'
 let $VIMCUSTOM = '$HOME/.vim/local' " host specific configs
 let s:is_win = has('win64') || has('win32') || has('win16')
+let s:is_macos = has('osx') || has('osxdarwin')
 
 if s:is_win
     set runtimepath+=$HOME/.vim
@@ -103,7 +104,9 @@ Plug 'tsiemens/vim-aftercolors' " customize color schemes
 Plug 'romainl/Apprentice'
 Plug 'zacanger/angr.vim'
 Plug 'gruvbox-community/gruvbox'
+Plug 'arcticicestudio/nord-vim'
 Plug 'joshdick/onedark.vim'
+Plug 'flrnd/plastic.vim'
 Plug 'srcery-colors/srcery-vim'
 Plug 'tyrannicaltoucan/vim-deep-space'
 
@@ -447,10 +450,10 @@ let g:airline_symbols.maxlinenr = ''
 
 "" ALE
 let g:ale_python_pylint_executable = 'pylint3'
-let g:ale_sign_error = ''
-let g:ale_sign_warning = g:ale_sign_error
-let g:ale_sign_info = g:ale_sign_error
-let g:ale_sign_style_error = ''
+let g:ale_sign_error = ''
+let g:ale_sign_warning = ''
+let g:ale_sign_info = g:ale_sign_warning
+let g:ale_sign_style_error = 'ﰊ'
 let g:ale_sign_style_warning = g:ale_sign_style_error
 " let g:ale_sign_error = ''
 " let g:ale_sign_warning = ''
@@ -532,9 +535,13 @@ let g:multi_cursor_prev_key = '<C-[>'
 "" vim-signify
 let g:signify_line_highlight = 0
 let g:signify_realtime = 0
-let g:signify_sign_show_count = 0
+let g:signify_sign_show_count = 1
 let g:signify_sign_show_text = 1
 let g:signify_vcs_list = [ 'git' ]
+let g:signify_sign_change = 'ﰣ'
+
+"" vim-sleuth
+let g:sleuth_automatic = 0
 
 """""""""""""""
 "  Filetypes  "

@@ -7,12 +7,12 @@
 
 let s:signs_hi = { 'err': synIDattr(synIDtrans(hlID('SpellBad')), 'sp', 'gui'),
                 \ 'warn': synIDattr(synIDtrans(hlID('SpellRare')), 'sp', 'gui'),
-                \ 'info': synIDattr(synIDtrans(hlID('SpellLocal')), 'sp', 'gui')
+                \ 'info': synIDattr(synIDtrans(hlID('SpellCap')), 'sp', 'gui')
                 \ }
 let s:signs_hi_cterm =
                 \ {'err': synIDattr(synIDtrans(hlID('SpellBad')), 'fg', 'cterm'),
                 \ 'warn': synIDattr(synIDtrans(hlID('SpellRare')), 'fg', 'cterm'),
-                \ 'info': synIDattr(synIDtrans(hlID('SpellLocal')), 'fg', 'cterm')
+                \ 'info': synIDattr(synIDtrans(hlID('SpellCap')), 'fg', 'cterm')
                 \ }
 let s:signs_bg = {
                 \ 'gui': '#1c1c1c',
