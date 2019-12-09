@@ -340,6 +340,9 @@ nnoremap <leader>dg :diffget<CR>
 nnoremap <silent> <M->> :><CR>
 nnoremap <silent> <M-<> :<<CR>
 
+" quickfix
+" check $VIMHOME/ftplugin/qf.vim
+
 "" Plugins
 """ ALE
 nmap <silent> <C-k> <Plug>(ale_previous_wrap)
