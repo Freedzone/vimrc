@@ -152,7 +152,7 @@ set laststatus=2    " show status line
 set noshowmode      " hide active mode name
 set showmatch       " highlight matching brackets
 set showtabline=2   " show tabs
-colorscheme gruvbox
+let g:safe_colors_name = "gruvbox"
 syntax enable
 
 """"""""""""
@@ -563,6 +563,11 @@ filetype plugin indent on " load filetype-specific indent files
 "  Local config  "
 """"""""""""""""""
 call s:lsource($VIMCUSTOM . '/local.vimrc')
+
+"""""""""""""""""""""""
+"  Safe color switch  "
+"""""""""""""""""""""""
+exec "colorscheme " . g:safe_colors_name
 
 """"""""""""""""
 "  Vimrc fold  "

@@ -16,4 +16,9 @@ highlight! link ALEInfoSign Directory
 highlight! link ALEStyleErrorSign ALEErrorSign
 highlight! link ALEStyleWarningSign ALEWarningSign
 
+highlight! link EasyMotionTarget SpecialChar
+highlight! link EasyMotionTarget2First EasyMotionTarget2FirstDefault
+highlight! link EasyMotionTarget2Second EasyMotionTarget2SecondDefault
+
+" Language specific
 highlight! link pythonString String

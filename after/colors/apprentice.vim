@@ -53,4 +53,8 @@ execute printf('highlight! ALEInfoSign %s guifg=%s ctermfg=%s',
 highlight! link ALEStyleErrorSign ALEErrorSign
 highlight! link ALEStyleWarningSign ALEWarningSign
 
+highlight! link EasyMotionTarget Function
+highlight! link EasyMotionTarget2First EasyMotionTarget2FirstDefault
+highlight! link EasyMotionTarget2Second EasyMotionTarget2SecondDefault
+
 execute 'AirlineTheme tomorrow'
