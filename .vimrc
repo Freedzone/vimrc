@@ -43,6 +43,7 @@ call plug#begin('~/.vim/plugged')
 "" General
 Plug 'qpkorr/vim-bufkill'
 Plug 'embear/vim-localvimrc'
+Plug 'romainl/vim-qf'
 Plug 'sheerun/vim-polyglot'
 Plug 'tpope/vim-sensible'
 
@@ -77,7 +78,6 @@ Plug 'tpope/vim-fugitive'
 Plug 'mhinz/vim-signify'
 
 "" Interface
-Plug 'Shougo/denite.nvim'
 Plug 'majutsushi/tagbar' " requires ctags
 Plug 'bling/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -91,7 +91,6 @@ Plug 'Freedzone/kerbovim'
 Plug 'davidhalter/jedi-vim'
 
 "" Utils
-Plug 'albfan/ag.vim'
 
 "" Visuals
 Plug 'ntpeters/vim-better-whitespace'
@@ -373,6 +372,10 @@ nmap ga <Plug>(EasyAlign)
 map <localleader><localleader> <Plug>(easymotion-prefix)
 map <leader><leader> <Plug>(easymotion-s)
 
+""" fugitive
+noremap <silent> <M-a> :Git blame<CR>
+noremap <silent> <M-s> :G<CR>
+
 """ fzf
 noremap <silent> <C-p> :FZF<cr>
 " fzf history
@@ -404,6 +407,9 @@ vmap <C-S-down> ]e
 
 """ vim-plug
 nnoremap <silent> <F1> :call vimrc#plughelp()<CR>
+
+""" vim-qf
+nmap <leader>e <Plug>(qf_qf_toggle)
 
 """"""""""""""""""""""
 "  Plugins settings  "

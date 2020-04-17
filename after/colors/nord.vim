@@ -15,3 +15,5 @@ highlight! ALEInfo cterm=undercurl gui=undercurl guisp=fg
 highlight! link ALEInfoSign Directory
 highlight! link ALEStyleErrorSign ALEErrorSign
 highlight! link ALEStyleWarningSign ALEWarningSign
+
+highlight! link pythonString String
