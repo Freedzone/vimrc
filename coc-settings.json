@@ -2,6 +2,9 @@
     "diagnostic": {
         "displayByAle": true
     },
+    "coc.preferences": {
+        "hoverTarget": "float"
+    },
     "suggest": {
         "completionItemKindLabels": {
             "class": "\uf0e8",
@@ -43,5 +46,8 @@
             "initializationOptions": {},
             "settings": {}
         }
+    },
+    "python": {
+        "jediEnabled": false
     }
 }

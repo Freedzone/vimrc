@@ -87,9 +87,6 @@ Plug 'ryanoasis/vim-devicons'
 "" Languages
 Plug 'Freedzone/kerbovim'
 
-"" Python
-Plug 'davidhalter/jedi-vim'
-
 "" Utils
 
 "" Visuals
@@ -186,7 +183,7 @@ set linebreak             " wrap full words, do not split
 set number                " line numbers
 set shellslash            " use UNIX like directory separator
 set showcmd               " show (partial) command in status line
-set updatetime=300
+set updatetime=700
 
 """"""""""""""""""""""
 "  Search & Replace  "
@@ -270,7 +267,7 @@ nnoremap <silent> <M-w> :bw<CR>
 nnoremap <silent> ZBD :bw<CR>
 nnoremap <silent> ZBU :bu<CR>
 " recently viewed buffer
-nnoremap <silent> <M-q> :b#<CR>
+nnoremap <silent> <M-e> :b#<CR>
 
 """ command mode
 cnoremap <C-v> <C-r>*
@@ -315,7 +312,8 @@ noremap <C-w>k <C-w>K
 noremap <C-w>j <C-w>J
 noremap <C-w>h <C-w>H
 noremap <C-q> <C-w>w
-noremap Q <C-w>W
+noremap <M-q> <C-w>W
+noremap Q <C-w>p
 noremap <silent> <M-h> :wincmd h<CR>
 noremap <silent> <M-j> :wincmd j<CR>
 noremap <silent> <M-k> :wincmd k<CR>
@@ -361,6 +359,12 @@ inoremap <silent><expr> <C-Space>
             \ pumvisible() ? "\<C-n>" :
             \ <SID>check_back_space() ? "\<SPACE>" :
             \ coc#refresh()
+nmap <leader>cd <Plug>(coc-definition)
+nmap <leader>cc <Plug>(coc-declaration)
+nmap <leader>ci <Plug>(coc-implementation)
+nmap <leader>ct <Plug>(coc-type-definition)
+nmap <leader>cr <Plug>(coc-references)
+nmap <leader>cn <Plug>(coc-rename)
 
 """ EasyAlign
 " Start interactive EasyAlign in visual mode (e.g. vipga)
@@ -409,7 +413,8 @@ vmap <C-S-down> ]e
 nnoremap <silent> <F1> :call vimrc#plughelp()<CR>
 
 """ vim-qf
-nmap <leader>e <Plug>(qf_qf_toggle)
+nmap <leader>ee <Plug>(qf_qf_toggle)
+nmap <leader>er <Plug>(qf_qf_switch)
 
 """"""""""""""""""""""
 "  Plugins settings  "
@@ -483,6 +488,9 @@ let g:bufferline_fixed_index = 1 " always first
 let g:bufferline_pathshorten = 0
 
 "" coc.nvim
+autocmd! CursorHold * silent call CocActionAsync('highlight')
+" extensions
+let g:coc_global_extensions = ['coc-sh', 'coc-python', 'coc-snippets']
 
 "" denite
 " let s:menus = {}

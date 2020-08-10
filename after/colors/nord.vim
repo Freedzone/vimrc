@@ -2,7 +2,6 @@
 " File: nord.vim
 " Author: freedzone
 " Description: customization for nord colorscheme
-" Last Modified: Oct 27, 2019
 " -----------------------------------------------------------------------------
 
 highlight! SignifySignAdd gui=bold
@@ -20,5 +19,18 @@ highlight! link EasyMotionTarget SpecialChar
 highlight! link EasyMotionTarget2First EasyMotionTarget2FirstDefault
 highlight! link EasyMotionTarget2Second EasyMotionTarget2SecondDefault
 
+" coc
+highlight! link CocHighlightText StatusLine
+highlight! link CocHoverRange CocHighlightText
+
 " Language specific
+
+highlight! link pythonBuiltinFunc SpecialChar
+highlight! link pythonConditional pythonStatement
+highlight! link pythonFunction Function
+highlight! link pythonImport Keyword
+highlight! link pythonRepeat pythonStatement
+highlight! link pythonOperator Operator
+highlight! link pythonStatement Statement
+highlight! link pythonStrFormat SpecialChar
 highlight! link pythonString String
