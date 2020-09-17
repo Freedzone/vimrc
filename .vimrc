@@ -3,6 +3,7 @@
 """""""""""""
 let $VIMHOME = '$HOME/.vim'
 let $VIMCUSTOM = '$HOME/.vim/local' " host specific configs
+let $VIMBUNDLES = '$HOME/.vim/bundles' " bundles location
 let s:is_win = has('win64') || has('win32') || has('win16')
 let s:is_macos = has('osx') || has('osxdarwin')
 
@@ -24,6 +25,11 @@ function! s:check_back_space() abort
     let col = col('.') - 1
     return !col || getline('.')[col - 1]  =~ '\s'
 endfunction
+
+""""""""""""""""""""""
+"  Local pre-config  "
+""""""""""""""""""""""
+call s:lsource($VIMCUSTOM . '/pre.vimrc')
 
 """""""""""""""""""""""""
 "  Plugins (vim-plug)  "
@@ -109,6 +115,10 @@ Plug 'tyrannicaltoucan/vim-deep-space'
 "" Local plugins
 call s:lsource($VIMCUSTOM . '/plugs.vim')
 
+for bundle in g:bundles
+    call s:lsource($VIMBUNDLES . '/' . bundle . '.plugs')
+endfor
+
 "" Initialize plugin system
 call plug#end()
 
@@ -183,7 +193,7 @@ set linebreak             " wrap full words, do not split
 set number                " line numbers
 set shellslash            " use UNIX like directory separator
 set showcmd               " show (partial) command in status line
-set updatetime=700
+set updatetime=500
 
 """"""""""""""""""""""
 "  Search & Replace  "
@@ -521,6 +531,7 @@ let g:fzf_colors =
             \ 'marker':  ['fg', 'Keyword'],
             \ 'spinner': ['fg', 'Label'],
             \ 'header':  ['fg', 'Comment'] }
+let g:fzf_layout = { 'down': '~30%' }
 
 "" indent-guides
 let g:indent_guides_enable_on_vim_startup = 1
@@ -555,7 +566,6 @@ let g:signify_realtime = 0
 let g:signify_sign_show_count = 1
 let g:signify_sign_show_text = 1
 let g:signify_vcs_list = [ 'git' ]
-let g:signify_sign_change = 'ﰣ'
 
 "" vim-sleuth
 let g:sleuth_automatic = 0
@@ -567,10 +577,17 @@ let g:sleuth_automatic = 0
 filetype plugin on " filetype-specific settings
 filetype plugin indent on " load filetype-specific indent files
 
-""""""""""""""""""
-"  Local config  "
-""""""""""""""""""
-call s:lsource($VIMCUSTOM . '/local.vimrc')
+"""""""""""""""""""""""
+"  Local post-config  "
+"""""""""""""""""""""""
+call s:lsource($VIMCUSTOM . '/post.vimrc')
+
+""""""""""""""""""""
+"  Bundles config  "
+""""""""""""""""""""
+for bundle in g:bundles
+    call s:lsource($VIMBUNDLES . '/' . bundle . '.vim')
+endfor
 
 """""""""""""""""""""""
 "  Safe color switch  "

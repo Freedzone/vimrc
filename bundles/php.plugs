@@ -1,0 +1,9 @@
+" PHP
+" Laravel
+Plug 'tpope/vim-dispatch'         " | Optional
+Plug 'noahfrederick/vim-laravel'  " |
+Plug 'noahfrederick/vim-composer' " |
+Plug 'tpope/vim-projectionist'    " |
+" indent
+Plug '2072/php-indenting-for-vim'
+" vim: ft=vim

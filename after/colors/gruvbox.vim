@@ -2,7 +2,6 @@
 " File: gruvbox.vim
 " Author: freedzone
 " Description: customization for gruvbox colorscheme
-" Last Modified: August 31, 2019
 " -----------------------------------------------------------------------------
 
 if has('gui_running')
@@ -24,5 +23,9 @@ execute 'highlight GruvboxAquaSign ' . s:bg
 
 highlight! link ALEStyleErrorSign ALEErrorSign
 highlight! link ALEStyleWarningSign ALEWarningSign
+
+" PHP
+highlight! link phpFunction Function
+highlight! link phpMethod phpInclude
 
 exec 'AirlineTheme bubblegum'
