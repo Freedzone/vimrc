@@ -24,7 +24,12 @@ execute 'highlight GruvboxAquaSign ' . s:bg
 highlight! link ALEStyleErrorSign ALEErrorSign
 highlight! link ALEStyleWarningSign ALEWarningSign
 
-" PHP
+" coc
+highlight! link CocHighlightText StatusLine
+highlight! link CocHoverRange CocHighlightText
+
+" Language specific
+"" PHP
 highlight! link phpFunction Function
 highlight! link phpMethod phpInclude
 

@@ -1,2 +1,3 @@
 " coc
-autocmd! CursorHold *.py silent call CocActionAsync('doHover')
+autocmd! CursorHold *.py if ! coc#float#has_float() |
+            \ call CocAction('doHover') | endif

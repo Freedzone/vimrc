@@ -6,6 +6,7 @@ let $VIMCUSTOM = '$HOME/.vim/local' " host specific configs
 let $VIMBUNDLES = '$HOME/.vim/bundles' " bundles location
 let s:is_win = has('win64') || has('win32') || has('win16')
 let s:is_macos = has('osx') || has('osxdarwin')
+let g:bundles = []
 
 if s:is_win
     set runtimepath+=$HOME/.vim
@@ -190,6 +191,7 @@ set encoding=utf-8
 set hidden                " allow buffer switching without saving
 set lazyredraw            " redraw only when we need to.
 set linebreak             " wrap full words, do not split
+set modeline              " modeline are cool
 set number                " line numbers
 set shellslash            " use UNIX like directory separator
 set showcmd               " show (partial) command in status line
@@ -375,6 +377,9 @@ nmap <leader>ci <Plug>(coc-implementation)
 nmap <leader>ct <Plug>(coc-type-definition)
 nmap <leader>cr <Plug>(coc-references)
 nmap <leader>cn <Plug>(coc-rename)
+" no mouse
+nnoremap <nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+nnoremap <nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 
 """ EasyAlign
 " Start interactive EasyAlign in visual mode (e.g. vipga)
@@ -499,8 +504,7 @@ let g:bufferline_pathshorten = 0
 
 "" coc.nvim
 autocmd! CursorHold * silent call CocActionAsync('highlight')
-" extensions
-let g:coc_global_extensions = ['coc-sh', 'coc-python', 'coc-snippets']
+let g:coc_global_extensions = ['coc-sh', 'coc-pyright', 'coc-snippets']
 
 "" denite
 " let s:menus = {}
