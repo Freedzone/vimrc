@@ -42,6 +42,10 @@ if !s:is_win && empty(glob($VIMHOME . '/autoload/plug.vim'))
     autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
+" vim-plug does not like this on Windows
+" disable before plugs
+set noshellslash
+
 " Specify a directory for plugins
 " avoid using standard Vim directory names like 'plugin'
 call plug#begin('~/.vim/plugged')
@@ -158,6 +162,7 @@ set cursorline      " highlight current line
 set foldcolumn=1    " enable fold column for left margin
 set laststatus=2    " show status line
 set noshowmode      " hide active mode name
+set shortmess+=c    " cleaner completion popup
 set showmatch       " highlight matching brackets
 set showtabline=2   " show tabs
 let g:safe_colors_name = "gruvbox"
@@ -558,6 +563,10 @@ let g:UltiSnipsSnippetDirectories = ["UltiSnips", "my-snips"]
 let g:gutentags_enabled=0
 let g:gutentags_generate_on_new=0
 
+"" vim-localvimrc
+let g:localvimrc_sandbox = 0
+let g:localvimrc_ask = 0
+
 "" vim-matchup
 let g:matchup_override_vimtex = 1
 
@@ -596,6 +605,8 @@ endfor
 """""""""""""""""""""""
 "  Safe color switch  "
 """""""""""""""""""""""
+" Keep it after all configs
+" in case variable was overridden
 exec "colorscheme " . g:safe_colors_name
 
 """"""""""""""""

@@ -21,6 +21,8 @@ execute 'highlight GruvboxBlueSign ' . s:bg
 execute 'highlight GruvboxPurpleSign ' . s:bg
 execute 'highlight GruvboxAquaSign ' . s:bg
 
+highlight! link Operator Number
+
 highlight! link ALEStyleErrorSign ALEErrorSign
 highlight! link ALEStyleWarningSign ALEWarningSign
 
