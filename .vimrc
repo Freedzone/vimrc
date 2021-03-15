@@ -319,6 +319,8 @@ nnoremap <F2> :mksession! session.vim<CR>
 nnoremap <silent> <C-F2> :source session.vim<CR>
 " execute current file
 nnoremap <F5> :!./%:r<CR>
+" current filename to buf
+nnoremap <silent> ZN :let @+=expand('%:p')<CR>
 
 """ windows
 " close window
