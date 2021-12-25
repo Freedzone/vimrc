@@ -34,5 +34,8 @@ highlight! link CocHoverRange CocHighlightText
 "" PHP
 highlight! link phpFunction Function
 highlight! link phpMethod phpInclude
+highlight! link phpDocComment SpecialKey
+highlight! link phpDocIdentifier Constant
+highlight! link phpDocTags GruvBoxFG3
 
 exec 'AirlineTheme bubblegum'

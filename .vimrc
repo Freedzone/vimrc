@@ -1,9 +1,9 @@
 """""""""""""
 "  Defines  "
 """""""""""""
-let $VIMHOME = '$HOME/.vim'
-let $VIMCUSTOM = '$HOME/.vim/local' " host specific configs
-let $VIMBUNDLES = '$HOME/.vim/bundles' " bundles location
+let $VIMHOME = expand('$HOME/.vim')
+let $VIMCUSTOM = expand('$HOME/.vim/local') " host specific configs
+let $VIMBUNDLES = expand('$HOME/.vim/bundles') " bundles location
 let s:is_win = has('win64') || has('win32') || has('win16')
 let s:is_macos = has('osx') || has('osxdarwin')
 let g:bundles = []
@@ -13,6 +13,15 @@ if s:is_win
 endif
 
 "" Functions
+" dump command output into a register
+function! Dump(cmd)
+    redir @a
+    exec printf('silent %s',a:cmd)
+    redir END
+    e dumpy
+    norm "ap
+endfunction
+
 " source file if exists
 function! s:lsource(filename)
     let expfilename = expand(a:filename)
@@ -56,6 +65,7 @@ Plug 'qpkorr/vim-bufkill'
 Plug 'embear/vim-localvimrc'
 Plug 'romainl/vim-qf'
 Plug 'sheerun/vim-polyglot'
+Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-sensible'
 
 "" Code
@@ -201,6 +211,10 @@ set number                " line numbers
 set shellslash            " use UNIX like directory separator
 set showcmd               " show (partial) command in status line
 set updatetime=500
+" Multi-language support
+" https://www.linux.org.ru/forum/development/14418127
+set langmap=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯЖХЪБЮ\\,ЁЭ;ABCDEFGHIJKLMNOPQRSTUVWXYZ\;{}<>?~\",фисвуапршолдьтщзйкыегмцчняжхъбю.ёэ;abcdefghijklmnopqrstuvwxyz\:[]\\,./`'
+set belloff=all
 
 """"""""""""""""""""""
 "  Search & Replace  "
@@ -268,6 +282,8 @@ nnoremap Y y$
 xnoremap <expr> p 'pgv"'.v:register.'y'
 " turn off search highlight (press enter twice)
 nnoremap <silent> <CR> :noh<CR>
+" for other languages
+noremap № <END>
 
 """ .vimrc
 " reload $MYVIMRC
@@ -384,9 +400,9 @@ nmap <leader>ci <Plug>(coc-implementation)
 nmap <leader>ct <Plug>(coc-type-definition)
 nmap <leader>cr <Plug>(coc-references)
 nmap <leader>cn <Plug>(coc-rename)
-" no mouse
-nnoremap <nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-nnoremap <nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+" scrolling completion float
+inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 
 """ EasyAlign
 " Start interactive EasyAlign in visual mode (e.g. vipga)
@@ -447,7 +463,7 @@ if !exists('g:airline_symbols')
 endif
 
 " extensions
-let g:airline_extensions = ['ale', 'branch', 'bufferline', 'tabline']
+let g:airline_extensions = ['ale', 'branch', 'bufferline', 'tabline', 'obsession']
 
 let g:airline#extensions#whitespace#enabled = 0
 
@@ -469,6 +485,9 @@ let g:airline#extensions#ale#warning_symbol = '  '
 let airline#extensions#ale#open_lnum_symbol = ' : #'
 let airline#extensions#ale#close_lnum_symbol = ''
 
+let g:airline#extensions#obsession#enabled = 1
+let g:airline#extensions#obsession#indicator_text = ''
+
 let g:airline_exclude_preview=1
 
 let g:airline_powerline_fonts=1
@@ -487,9 +506,9 @@ let g:airline_symbols.maxlinenr = ''
 "" ALE
 let g:ale_python_pylint_executable = 'pylint3'
 let g:ale_sign_error = ''
-let g:ale_sign_warning = ''
+let g:ale_sign_warning = ''
 let g:ale_sign_info = g:ale_sign_warning
-let g:ale_sign_style_error = 'ﰊ'
+let g:ale_sign_style_error = ''
 let g:ale_sign_style_warning = g:ale_sign_style_error
 " let g:ale_sign_error = ''
 " let g:ale_sign_warning = ''

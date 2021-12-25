@@ -34,8 +34,7 @@
             "variable": "\ue79b"
         },
         "autoTrigger": "always",
-        "enablePreview": true,
-        "minTriggerInputLength": 2
+        "enablePreview": true
     },
     "languageserver": {
         "kls": {
@@ -49,5 +48,14 @@
     },
     "python": {
         "jediEnabled": false
+    },
+    "texlab": {
+        "build": {
+            "args": ["-pdf", "-interaction=nonstopmode", "-synctex=1",
+                "-auxdir=log", "-outdir=build", "%f"]
+        },
+        "chktex": {
+            "onOpenAndSave": false
+        }
     }
 }
