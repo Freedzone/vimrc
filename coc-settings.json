@@ -46,6 +46,10 @@
             "settings": {}
         }
     },
+    "pyright": {
+        "disableDiagnostics": true,
+        "inlayHints.enable": false
+    },
     "python": {
         "jediEnabled": false
     },

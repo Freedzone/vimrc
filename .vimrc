@@ -309,8 +309,8 @@ cnoremap <C-b> <C-a>
 cnoremap <C-a> <Home>
 
 """ completion
-inoremap <expr> <Tab>   pumvisible() ? "<Down>" : "<Tab>"
-inoremap <expr> <S-Tab>   pumvisible() ? "<Up>" : "<C-d>"
+inoremap <expr> <Tab> coc#pum#visible() ? coc#pum#next(0) : pumvisible() ? "<down>" : "<Tab>"
+inoremap <expr> <S-Tab> coc#pum#visible() ? coc#pum#prev(0) : pumvisible() ? "<up>" : "<C-d>"
 
 """ files
 " write file
@@ -391,7 +391,7 @@ nnoremap <silent> ZBU :BU<CR>
 
 """ coc.nvim
 inoremap <silent><expr> <C-Space>
-            \ pumvisible() ? "\<C-n>" :
+            \ coc#pum#visible() ? coc#pum#next(0) :
             \ <SID>check_back_space() ? "\<SPACE>" :
             \ coc#refresh()
 nmap <leader>cd <Plug>(coc-definition)
@@ -431,7 +431,8 @@ noremap <silent> <leader>fb :Buffers<cr>
 nnoremap <silent> <leader>n :NERDTreeFocus<cr>
 
 """ pear-tree
-imap <expr> <CR> pumvisible()  ? "<C-y>" : "<Plug>(PearTreeExpand)"
+imap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() :
+            \ pumvisible() ? "<C-y>" : "<Plug>(PearTreeExpand)"
 imap <C-c> <Plug>(PearTreeFinishExpansion)
 imap <M-n> <Plug>(PearTreeJump)
 
@@ -504,7 +505,7 @@ let g:airline_symbols.linenr = ''
 let g:airline_symbols.maxlinenr = ''
 
 "" ALE
-let g:ale_python_pylint_executable = 'pylint3'
+let g:ale_python_pylint_executable = 'pylint'
 let g:ale_sign_error = ''
 let g:ale_sign_warning = ''
 let g:ale_sign_info = g:ale_sign_warning
