@@ -246,6 +246,7 @@ if has('gui_running')
     if s:is_win
         autocmd GUIEnter * simalt ~x
         set guifont=FuraCode\ NF:h11
+        set termwintype=conpty " fixes issues with FZF colors in Vim 9+
     else
         augroup maximizewindow
             autocmd!
@@ -563,6 +564,7 @@ let g:fzf_colors =
             \ 'spinner': ['fg', 'Label'],
             \ 'header':  ['fg', 'Comment'] }
 let g:fzf_layout = { 'down': '~30%' }
+let g:fzf_force_termguicolors = 1
 
 "" indent-guides
 let g:indent_guides_enable_on_vim_startup = 1
@@ -627,6 +629,8 @@ endfor
 """""""""""""""""""""""
 "  Safe color switch  "
 """""""""""""""""""""""
+" Fix ugly terminal
+autocmd ColorScheme * hi! link Terminal Normal
 " Keep it after all configs
 " in case variable was overridden
 exec "colorscheme " . g:safe_colors_name
