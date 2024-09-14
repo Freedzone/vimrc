@@ -38,4 +38,33 @@ highlight! link phpDocComment SpecialKey
 highlight! link phpDocIdentifier Constant
 highlight! link phpDocTags GruvBoxFG3
 
+"" Markdown
+hi! link htmlH1 markdownH1
+hi! link htmlH2 markdownH2
+hi! link htmlH3 markdownH3
+hi! link htmlH4 markdownH4
+hi! link htmlH5 markdownH5
+hi! link htmlH6 markdownH6
+hi! link mkdDelimiter markdownHeadingDelimiter
+"
+hi! link mkdCode markdownCode
+" hi! link markdownCodeBlock CodeBlock
+hi! link mkdCodeDelimiter markdownCodeDelimiter
+"
+" hi! link markdownBlockquote Quote
+hi! link mkdListItem markdownListMarker
+hi! link mkdNonListItem markdownOrderedListMarker
+" hi! link markdownRule Punctuation
+" hi! link markdownHeadingRule Punctuation
+"
+" hi! link markdownUrlDelimiter Punctuation
+" hi! link markdownLinkDelimiter Punctuation
+" hi! link markdownLinkTextDelimiter Punctuation
+"
+hi! link mkdURL markdownUrl
+hi! link mkdDelimiter markdownUrlTitleDelimiter
+"
+" hi! link markdownLinkText Identifier
+" hi! link markdownIdDeclaration Identifier
+
 exec 'AirlineTheme bubblegum'
