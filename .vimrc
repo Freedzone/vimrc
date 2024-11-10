@@ -36,6 +36,16 @@ function! s:check_back_space() abort
     return !col || getline('.')[col - 1]  =~ '\s'
 endfunction
 
+" for coc hover docs
+" Show hover when provider exists, fallback to vim's builtin behavior.
+function! ShowDocumentation()
+    if CocAction('hasProvider', 'hover')
+        call CocActionAsync('doHover')
+    else
+        call feedkeys('K', 'in')
+    endif
+endfunction
+
 """"""""""""""""""""""
 "  Local pre-config  "
 """"""""""""""""""""""
@@ -83,14 +93,13 @@ Plug 'tmsvg/pear-tree'
 Plug 'tomtom/tcomment_vim'
 Plug 'junegunn/vim-easy-align'
 Plug 'easymotion/vim-easymotion'
-Plug 'terryma/vim-multiple-cursors'
+Plug 'mg979/vim-visual-multi'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 
 "" Files
 Plug 'junegunn/fzf'
-Plug 'tweekmonster/fzf-filemru'
 Plug 'junegunn/fzf.vim'
 Plug 'scrooloose/nerdtree'
 
@@ -123,9 +132,7 @@ Plug 'zacanger/angr.vim'
 Plug 'gruvbox-community/gruvbox'
 Plug 'arcticicestudio/nord-vim'
 Plug 'joshdick/onedark.vim'
-Plug 'flrnd/plastic.vim'
 Plug 'srcery-colors/srcery-vim'
-Plug 'tyrannicaltoucan/vim-deep-space'
 
 "" Local plugins
 call s:lsource($VIMCUSTOM . '/plugs.vim')
@@ -208,6 +215,7 @@ set lazyredraw            " redraw only when we need to.
 set linebreak             " wrap full words, do not split
 set modeline              " modeline are cool
 set number                " line numbers
+set sessionoptions=curdir,folds,help,tabpages,winsize,terminal " cleaner
 set shellslash            " use UNIX like directory separator
 set showcmd               " show (partial) command in status line
 set updatetime=500
@@ -391,6 +399,7 @@ nnoremap <silent> ZBD :BW<CR>
 nnoremap <silent> ZBU :BU<CR>
 
 """ coc.nvim
+nnoremap <silent> K :call ShowDocumentation()<CR>
 inoremap <silent><expr> <C-Space>
             \ coc#pum#visible() ? coc#pum#next(0) :
             \ <SID>check_back_space() ? "\<SPACE>" :
@@ -459,6 +468,7 @@ nmap <leader>er <Plug>(qf_qf_switch)
 """"""""""""""""""""""
 "  Plugins settings  "
 """"""""""""""""""""""
+augroup Plugins
 "" airline
 if !exists('g:airline_symbols')
     let g:airline_symbols = {}
@@ -512,11 +522,9 @@ let g:ale_sign_warning = ''
 let g:ale_sign_info = g:ale_sign_warning
 let g:ale_sign_style_error = ''
 let g:ale_sign_style_warning = g:ale_sign_style_error
-" let g:ale_sign_error = ''
-" let g:ale_sign_warning = ''
-" let g:ale_sign_info = ''
-" let g:ale_sign_style_error = ''
-" let g:ale_sign_style_warning = ''
+" Popup for suggestions
+let g:ale_floating_preview = 1
+autocmd Plugins CursorHold * silent ALEDetail
 
 "" better-whitespace
 highlight! def link ExtraWhitespace PMenuSel
@@ -531,7 +539,7 @@ let g:bufferline_fixed_index = 1 " always first
 let g:bufferline_pathshorten = 0
 
 "" coc.nvim
-autocmd! CursorHold * silent call CocActionAsync('highlight')
+autocmd Plugins CursorHold * silent call CocActionAsync('highlight')
 let g:coc_global_extensions = ['coc-sh', 'coc-pyright', 'coc-snippets']
 
 "" denite
@@ -593,9 +601,6 @@ let g:localvimrc_ask = 0
 
 "" vim-matchup
 let g:matchup_override_vimtex = 1
-
-"" vim-multiple-cursors
-let g:multi_cursor_prev_key = '<C-[>'
 
 "" vim-signify
 let g:signify_line_highlight = 0

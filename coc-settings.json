@@ -36,6 +36,9 @@
         "autoTrigger": "always",
         "enablePreview": true
     },
+    "[php]": {
+        "diagnostic.enable": false
+    },
     "languageserver": {
         "kls": {
             "command": "kls",
@@ -45,6 +48,14 @@
             "initializationOptions": {},
             "settings": {}
         }
+        // "php": {
+        //     "command": "php",
+        //     "args": ["-d memory_limit=1024M", "C:/wamp64/bin/serenata/bin/console", "--uri=tcp://127.0.0.1:11111"],
+        //     "shell": true,
+        //     "filetypes": ["php"],
+        //     "initializationOptions": {},
+        //     "settings": {}
+        // }
     },
     "pyright": {
         "disableDiagnostics": true,
